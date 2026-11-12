@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zumbido Rolante — Stand Automóvel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070708; --bg2:#0e0e10; --glass:rgba(22,22,26,.62); --glass2:rgba(30,30,35,.75);
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --red:#ff1a0d; --red-d:#c40800; --glow:rgba(255,26,13,.45);
+  --txt:#f5f5f6; --mut:#9a9aa3; --ok:#22c55e;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --sans:"Space Grotesk",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.5;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:56px 56px;mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 75%);opacity:.55}
+body::after{content:"";position:fixed;z-index:-1;width:900px;height:900px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,26,13,.16),transparent 65%);top:-450px;right:-300px;pointer-events:none}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 22px}
+.mono{font-family:var(--mono)}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--red)}
+.label::before{content:"// ";opacity:.6}
+
+/* ---------- HEADER ---------- */
+header{position:sticky;top:0;z-index:60;background:rgba(7,7,8,.72);backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:26px;height:70px}
+.logo{display:flex;align-items:center;gap:11px;margin-right:auto}
+.logo-mark{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--red),var(--red-d));display:grid;place-items:center;box-shadow:0 0 22px var(--glow)}
+.logo-txt{font-weight:700;font-size:19px;letter-spacing:-.01em;line-height:1}
+.logo-txt small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--mut);font-weight:400;margin-top:4px}
+.tabs{display:flex;gap:4px;background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:4px}
+.tab{padding:9px 16px;border-radius:9px;font-size:14px;font-weight:500;color:var(--mut);transition:.2s;white-space:nowrap}
+.tab:hover{color:var(--txt)}
+.tab.active{background:var(--txt);color:#000}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--red);color:#fff;font-weight:600;font-size:14px;padding:12px 20px;border-radius:10px;border:0;cursor:pointer;transition:.2s;box-shadow:0 0 0 0 var(--glow);white-space:nowrap}
+.btn:hover{box-shadow:0 0 26px var(--glow);transform:translateY(-1px)}
+.btn.ghost{background:var(--glass);border:1px solid var(--line2);box-shadow:none}
+.btn.ghost:hover{border-color:var(--red)}
+.btn.wa{background:#1faa53}
+.btn.wa:hover{box-shadow:0 0 26px rgba(31,170,83,.5)}
+.btn.sm{padding:8px 14px;font-size:13px}
+.burger{display:none;background:none;border:1px solid var(--line2);border-radius:9px;color:var(--txt);width:42px;height:42px;cursor:pointer}
+
+/* ---------- VIEWS ---------- */
+.view{display:none;animation:fade .45s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+section{padding:72px 0}
+.h2{font-size:clamp(34px,4.6vw,54px);line-height:1.02;letter-spacing:-.03em;font-weight:700}
+.h2 em{font-style:normal;color:var(--red)}
+.lead{color:var(--mut);font-size:17px;max-width:560px}
+.head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:34px}
+.head .label{display:block;margin-bottom:12px}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(10px)}
+
+/* ---------- HERO ---------- */
+.hero{padding:70px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--mut);border:1px solid var(--line2);border-radius:99px;padding:6px 13px;margin-bottom:22px;background:var(--glass)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);animation:pulse 1.8s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.hero h1{font-size:clamp(46px,7.2vw,92px);line-height:.95;letter-spacing:-.045em;font-weight:700;margin-bottom:22px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--red),#ff7a52);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{margin-bottom:30px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.hud{position:relative;aspect-ratio:1.25;border-radius:22px;border:1px solid var(--line);background:
+  radial-gradient(circle at 50% 62%,rgba(255,26,13,.22),transparent 55%),var(--glass);overflow:hidden}
+.hud-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hud-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,7,8,.45),transparent 28%,transparent 62%,rgba(7,7,8,.75)),radial-gradient(ellipse at 52% 55%,transparent 38%,rgba(7,7,8,.6))}
+.hud-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:28px 28px}
+.target{position:absolute;left:24%;top:31%;width:59%;height:39%;border:1px solid rgba(255,26,13,.85);box-shadow:inset 0 0 30px rgba(255,26,13,.18);animation:tgt 2.8s ease-in-out infinite}
+.target>span{position:absolute;top:-23px;left:-1px;background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:3px 8px;white-space:nowrap}
+.target>i{position:absolute;bottom:-1px;left:-1px;height:3px;background:var(--red);box-shadow:0 0 12px var(--red);animation:load 2.8s ease-in-out infinite}
+@keyframes tgt{50%{box-shadow:inset 0 0 50px rgba(255,26,13,.3),0 0 22px rgba(255,26,13,.35)}}
+@keyframes load{0%{width:0}70%,100%{width:calc(100% + 2px)}}
+.hud .scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);box-shadow:0 0 18px var(--red);animation:scan 3.6s ease-in-out infinite}
+@keyframes scan{0%,100%{top:18%}50%{top:82%}}
+.hud .car{position:absolute;left:6%;right:6%;top:38%}
+.hud-tag{position:absolute;font-family:var(--mono);font-size:11.5px;background:rgba(7,7,8,.82);border:1px solid var(--line2);border-radius:8px;padding:7px 11px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.hud-tag b{color:var(--ok);font-weight:500}
+.hud-tag.t1{top:7%;left:5%} .hud-tag.t2{top:15%;right:4%} .hud-tag.t3{bottom:7%;left:5%} .hud-tag.t4{bottom:17%;right:4%}
+.hud .scan{z-index:2}.hud-tag,.corner,.target{z-index:3}
+/* fotos */
+.card-img img,.mimg img.main{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card-img .badge,.card-img .fuel{z-index:2}
+.sold{position:absolute;inset:0;z-index:3;background:rgba(7,7,8,.62);display:grid;place-items:center;font-family:var(--mono);letter-spacing:.35em;font-size:18px;font-weight:700}
+.grid.list .card-img{min-height:210px}
+.thumbs{display:flex;gap:8px;padding:14px 28px 0;flex-wrap:wrap}
+.thumbs img{width:78px;height:52px;object-fit:cover;border-radius:8px;border:1px solid var(--line2);cursor:pointer;opacity:.55}
+.thumbs img.on{opacity:1;border-color:var(--red)}
+/* gestão */
+[hidden]{display:none!important}
+.fab{position:fixed;right:18px;bottom:18px;z-index:80;display:none;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.admin-box{max-width:820px;padding:24px}
+.ad-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.ad-head h3{font-size:24px;font-weight:700}
+.ad-note{font-size:13px;color:var(--mut);margin-bottom:16px}
+.ad-row{display:grid;grid-template-columns:84px 1fr auto;gap:14px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.02)}
+.ad-th{width:84px;height:56px;border-radius:8px;overflow:hidden;background:#141417;position:relative;display:grid;place-items:center}
+.ad-th img{width:100%;height:100%;object-fit:cover}.ad-th svg{width:90%}
+.ad-row b{display:block;font-size:15px}.ad-row small{color:var(--mut);font-size:12.5px}
+.ad-acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ad-acts .btn{padding:7px 11px;font-size:12.5px}
+.btn.danger{background:transparent;border:1px solid rgba(255,26,13,.5);color:#ff6b61;box-shadow:none}
+.drop{display:flex;align-items:center;justify-content:center;gap:10px;border:1px dashed var(--line2);border-radius:12px;padding:20px;color:var(--mut);cursor:pointer;font-size:14px;text-align:center}
+.drop:hover{border-color:var(--red);color:var(--txt)}
+.ph-list{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ph{position:relative;width:110px;height:74px;border-radius:9px;overflow:hidden;border:1px solid var(--line2)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph button{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.75);color:#fff;cursor:pointer;font-size:13px}
+.ph .cap{position:absolute;left:4px;bottom:4px;font-family:var(--mono);font-size:9.5px;background:var(--red);padding:2px 6px;border-radius:4px}
+.ph .mk{position:absolute;left:4px;bottom:4px;font-family:var(--mono);font-size:9.5px;background:rgba(0,0,0,.75);padding:2px 6px;border-radius:4px;border:0;color:#fff;cursor:pointer}
+.ad-status{font-size:13px;margin-top:12px;min-height:18px}
+@media (max-width:560px){.ad-row{grid-template-columns:64px 1fr}.ad-th{width:64px;height:44px}.ad-acts{grid-column:1/-1;justify-content:flex-start}}
+.corner{position:absolute;width:18px;height:18px;border-color:var(--red);border-style:solid}
+.c1{top:12px;left:12px;border-width:2px 0 0 2px}.c2{top:12px;right:12px;border-width:2px 2px 0 0}.c3{bottom:12px;left:12px;border-width:0 0 2px 2px}.c4{bottom:12px;right:12px;border-width:0 2px 2px 0}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:56px}
+.kpi{background:var(--bg2);padding:22px 24px}
+.kpi b{display:block;font-size:34px;font-weight:700;letter-spacing:-.03em;line-height:1.05}
+.kpi b span{color:var(--red)}
+.kpi small{font-family:var(--mono);font-size:11.5px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
+
+/* quick search */
+.qs{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:10px;padding:14px;margin-top:-6px}
+.field label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:0 0 6px 2px}
+select,input,textarea{width:100%;background:rgba(7,7,8,.7);color:var(--txt);border:1px solid var(--line2);border-radius:10px;padding:11px 13px;font:inherit;font-size:14px;transition:border-color .2s,box-shadow .2s}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(255,26,13,.18)}
+textarea{resize:vertical;min-height:90px}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%239a9aa3' stroke-width='1.6'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+input[type=date]{color-scheme:dark}
+.qs .btn{align-self:end;height:44px}
+
+/* ---------- CAR CARDS ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
+.grid.list{grid-template-columns:1fr}
+.card{position:relative;background:var(--glass);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;transition:.25s}
+.card:hover{border-color:rgba(255,26,13,.55);transform:translateY(-4px);box-shadow:0 18px 40px -18px var(--glow)}
+.card-img{position:relative;aspect-ratio:16/10;background:radial-gradient(circle at 50% 75%,rgba(255,255,255,.07),transparent 60%),linear-gradient(170deg,#18181c,#0b0b0d);display:grid;place-items:center;border-bottom:1px solid var(--line)}
+.card-img svg{width:84%}
+.badge{position:absolute;top:12px;left:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;background:var(--red);color:#fff;padding:4px 9px;border-radius:6px}
+.fuel{position:absolute;top:12px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;background:rgba(7,7,8,.8);border:1px solid var(--line2);padding:4px 9px;border-radius:6px}
+.card-body{padding:18px}
+.card h3{font-size:20px;font-weight:600;letter-spacing:-.02em;line-height:1.2}
+.sub{color:var(--mut);font-size:13.5px;margin-bottom:14px}
+.specs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.spec{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.spec small{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.spec b{font-size:13.5px;font-weight:600}
+.price-row{display:flex;justify-content:space-between;align-items:center}
+.price{font-size:26px;font-weight:700;letter-spacing:-.03em}
+.mensal{font-family:var(--mono);font-size:11.5px;color:var(--mut);text-align:right}
+.mensal b{color:var(--txt);font-weight:500}
+.grid.list .card{display:grid;grid-template-columns:320px 1fr}
+.grid.list .card-img{aspect-ratio:auto;border-bottom:0;border-right:1px solid var(--line)}
+
+/* ---------- VIATURAS PAGE ---------- */
+.inv{display:grid;grid-template-columns:290px 1fr;gap:24px;align-items:start}
+.side{position:sticky;top:90px;padding:20px;max-height:calc(100vh - 110px);overflow:auto}
+.side h4{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);margin:20px 0 10px;font-weight:500}
+.side h4:first-of-type{margin-top:0}
+.side-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.side-top b{font-size:17px}
+.linkbtn{background:none;border:0;color:var(--red);font-family:var(--mono);font-size:12px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid var(--line2);background:rgba(255,255,255,.02);color:var(--mut);border-radius:99px;padding:6px 12px;font-size:13px;cursor:pointer;transition:.15s}
+.chip:hover{color:var(--txt)}
+.chip.on{background:rgba(255,26,13,.14);border-color:var(--red);color:#fff}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.checks{display:grid;gap:8px}
+.check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mut);cursor:pointer}
+.check input{width:17px;height:17px;accent-color:var(--red);padding:0}
+.range-out{font-family:var(--mono);font-size:12px;color:var(--txt);float:right;text-transform:none;letter-spacing:0}
+input[type=range]{padding:0;border:0;background:none;accent-color:var(--red);height:24px}
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.search{position:relative;flex:1;min-width:220px}
+.search input{padding-left:40px}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--mut)}
+.toolbar select{width:auto}
+.vtoggle{display:flex;border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+.vtoggle button{background:transparent;border:0;color:var(--mut);padding:10px 12px;cursor:pointer;display:grid;place-items:center}
+.vtoggle button.on{background:var(--txt);color:#000}
+.result-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.result-bar .mono{font-size:13px;color:var(--mut)}
+.result-bar .mono b{color:var(--txt)}
+.active-chips{display:flex;gap:7px;flex-wrap:wrap}
+.achip{font-size:12.5px;display:inline-flex;align-items:center;gap:6px;background:var(--glass2);border:1px solid var(--line2);border-radius:99px;padding:5px 7px 5px 12px;cursor:pointer}
+.achip span{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:12px}
+.empty{padding:50px 20px;text-align:center;color:var(--mut);border:1px dashed var(--line2);border-radius:16px}
+.filter-open{display:none}
+
+/* ---------- WHY / FEATURES ---------- */
+.feat{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.feat .f{padding:24px}
+.ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;background:rgba(255,26,13,.12);border:1px solid rgba(255,26,13,.3);color:var(--red);margin-bottom:18px}
+.f h3{font-size:18px;font-weight:600;margin-bottom:6px}
+.f p{color:var(--mut);font-size:14px}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.teaser{padding:34px;position:relative;overflow:hidden}
+.teaser::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:var(--glow);filter:blur(80px);right:-90px;bottom:-110px;opacity:.6}
+
+/* ---------- OFICINA PAGE ---------- */
+.of-hero{padding:60px 0 30px}
+.of-brand{font-size:clamp(56px,9vw,120px);font-weight:700;letter-spacing:-.05em;line-height:.9}
+.of-brand span{color:var(--red)}
+.services{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.svc{padding:20px;transition:.2s}
+.svc:hover{border-color:rgba(255,26,13,.5)}
+.svc .ic{width:40px;height:40px;border-radius:10px;margin-bottom:14px}
+.svc h3{font-size:16px;font-weight:600;margin-bottom:4px}
+.svc p{font-size:13px;color:var(--mut)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.step{padding:20px;display:flex;gap:14px;align-items:flex-start}
+.step .n{font-family:var(--mono);font-size:12px;color:var(--red);border:1px solid rgba(255,26,13,.4);border-radius:8px;padding:5px 8px;flex:none}
+.step h4{font-size:15px;font-weight:600}
+.step p{font-size:13px;color:var(--mut)}
+.booking{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:start}
+.form{padding:28px}
+.form h3{font-size:22px;font-weight:600;margin-bottom:4px}
+.form .sub{margin-bottom:22px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fgrid .full{grid-column:1/-1}
+.req{color:var(--red)}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slot{border:1px solid var(--line2);background:rgba(255,255,255,.02);color:var(--txt);border-radius:9px;padding:10px 0;font-family:var(--mono);font-size:13px;cursor:pointer;transition:.15s}
+.slot:hover{border-color:var(--red)}
+.slot.on{background:var(--red);border-color:var(--red)}
+.slot:disabled{opacity:.3;cursor:not-allowed}
+.hint{font-size:12.5px;color:var(--mut);margin-top:6px}
+.err{font-size:13px;color:#ff6b61;margin-top:14px;display:none}
+.summary{padding:24px;position:sticky;top:90px}
+.summary h3{font-size:18px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sum-list{font-family:var(--mono);font-size:12.5px;display:grid;gap:9px;margin-bottom:20px}
+.sum-list div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--line2);padding-bottom:8px}
+.sum-list span{color:var(--mut)}
+.sum-list b{font-weight:500;text-align:right}
+.done{display:none;margin-top:14px;padding:16px;border-radius:12px;border:1px solid rgba(31,170,83,.4);background:rgba(31,170,83,.08)}
+.done.on{display:block}
+.done p{font-size:13.5px;color:var(--mut);margin:6px 0 12px}
+.done .acts{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- CONTACTOS ---------- */
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cbox{padding:26px}
+.cbox h3{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:12px;font-weight:500}
+.cbox p{font-size:18px;font-weight:500}
+.cbox small{color:var(--mut);font-size:13px}
+
+footer{border-top:1px solid var(--line);padding:28px 0;margin-top:40px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--mut)}
+
+/* ---------- MODAL ---------- */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:18px}
+.modal.open{display:flex}
+.mbox{width:100%;max-width:880px;max-height:92vh;overflow:auto;background:var(--bg2);border:1px solid var(--line2);border-radius:20px;animation:fade .3s}
+.mimg{position:relative;aspect-ratio:16/7;background:radial-gradient(circle at 50% 70%,rgba(255,26,13,.18),transparent 60%),linear-gradient(170deg,#18181c,#0b0b0d);display:grid;place-items:center;border-bottom:1px solid var(--line)}
+.mimg svg{width:62%}
+.mclose{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.6);border:1px solid var(--line2);color:#fff;font-size:20px;cursor:pointer}
+.mbody{padding:28px;display:grid;grid-template-columns:1.4fr 1fr;gap:28px}
+.mbody h3{font-size:30px;letter-spacing:-.03em;line-height:1.05;font-weight:700}
+.mspecs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:20px 0}
+.equip{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.equip span{font-size:12.5px;border:1px solid var(--line2);border-radius:99px;padding:5px 11px;color:var(--mut)}
+.mside{padding:20px}
+.mside .price{font-size:36px}
+.calc{margin:16px 0;padding-top:16px;border-top:1px dashed var(--line2)}
+.calc .row{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin-bottom:6px}
+.calc .row b{color:var(--txt);font-family:var(--mono);font-weight:500}
+.big{font-size:24px;font-weight:700;color:var(--txt)}
+.note{font-size:11.5px;color:var(--mut);margin-top:10px;font-family:var(--mono)}
+
+/* ---------- RESPONSIVE ---------- */
+/* ---------- VISITA 360 ---------- */
+.tour{position:relative;height:min(72vh,640px);overflow:hidden;border-radius:18px;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;background:#050506}
+.tour.drag{cursor:grabbing}
+.tour:fullscreen{height:100vh;border-radius:0}
+.tour canvas{width:100%;height:100%;display:block;transition:opacity .35s}
+.tour-hs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hs{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:9px;will-change:transform}
+.hs .pt{flex:none;width:34px;height:34px;border-radius:50%;background:rgba(255,26,13,.92);border:2px solid #fff;display:grid;place-items:center;color:#fff;animation:ping 1.8s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,26,13,.6)}70%,100%{box-shadow:0 0 0 14px rgba(255,26,13,0)}}
+.hs.go .pt{background:#fff;color:#000;animation:pingw 1.8s infinite}
+@keyframes pingw{0%{box-shadow:0 0 0 0 rgba(255,255,255,.5)}70%,100%{box-shadow:0 0 0 14px rgba(255,255,255,0)}}
+.hs .tip{background:rgba(7,7,8,.86);border:1px solid var(--line2);border-radius:10px;padding:6px 11px;font-size:12.5px;white-space:nowrap;backdrop-filter:blur(6px);transition:.2s}
+.hs .tip b{display:block;font-size:13px;font-weight:600}
+.hs .tip small{font-family:var(--mono);color:#ff6b61;font-size:11px}
+.hs:hover .tip{border-color:var(--red)}
+.tour-top{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}
+.tour-zones{display:flex;gap:4px;background:rgba(7,7,8,.72);border:1px solid var(--line2);border-radius:12px;padding:4px;pointer-events:auto;backdrop-filter:blur(8px)}
+.tour-zones button{background:none;border:0;color:var(--mut);padding:8px 14px;border-radius:9px;cursor:pointer;font-weight:500;font-size:14px}
+.tour-zones button.on{background:var(--red);color:#fff}
+.tbtn{pointer-events:auto;width:42px;height:42px;border-radius:11px;border:1px solid var(--line2);background:rgba(7,7,8,.72);color:#fff;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(8px)}
+.tour-hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:rgba(7,7,8,.78);border:1px solid var(--line2);border-radius:99px;padding:8px 15px;font-size:13px;white-space:nowrap;pointer-events:none;transition:opacity .5s}
+.tour-badge{position:absolute;bottom:16px;right:16px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mut);background:rgba(7,7,8,.72);padding:5px 9px;border-radius:6px;pointer-events:none}
+.tour-load{position:absolute;inset:0;display:grid;place-items:center;background:#070708;font-family:var(--mono);font-size:13px;color:var(--mut);transition:opacity .4s}
+@media (max-width:640px){ .tour{height:66vh} .hs:not(.go) .tip{display:none} .tour-badge{display:none} .tour-hint{bottom:12px} }
+
+@media (max-width:1050px){
+  .feat,.services{grid-template-columns:1fr 1fr}
+  .qs{grid-template-columns:1fr 1fr}
+  .qs .btn{grid-column:1/-1}
+  .kpis{grid-template-columns:1fr 1fr}
+}
+@media (max-width:900px){
+  .hero-grid,.split,.booking,.mbody{grid-template-columns:1fr}
+  .tabs{display:none;position:absolute;top:70px;left:12px;right:12px;flex-direction:column;padding:8px}
+  .tabs.open{display:flex}
+  .burger{display:grid;place-items:center}
+  .nav>.btn{display:none}
+  .inv{grid-template-columns:1fr}
+  .side{position:fixed;inset:0 0 0 auto;width:min(340px,90vw);max-height:none;height:100vh;z-index:90;border-radius:0;transform:translateX(105%);transition:transform .3s;background:var(--bg2)}
+  .side.open{transform:none}
+  .filter-open{display:inline-flex}
+  .steps,.cgrid{grid-template-columns:1fr}
+  .grid.list .card{grid-template-columns:1fr}
+  .summary{position:static}
+}
+@media (max-width:560px){
+  section{padding:54px 0}
+  .feat,.services{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr}
+  .slots{grid-template-columns:repeat(3,1fr)}
+  .mspecs{grid-template-columns:1fr 1fr}
+  .hud-tag{font-size:10px;padding:5px 8px}
+  .toolbar select{flex:1}
+}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:85;display:none}
+.scrim.on{display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#inicio" class="logo">
+      <span class="logo-mark"><svg width="20" height="22" viewBox="0 0 20 22"><path d="M12.5 0 L1 12.5 H8.5 L6.5 22 L19 8.5 H11.5 Z" fill="#fff"/></svg></span>
+      <span class="logo-txt">Zumbido Rolante<small>STAND · AUTO NEVES</small></span>
+    </a>
+    <nav class="tabs" id="tabs">
+      <a class="tab" href="#inicio" data-v="inicio">Início</a>
+      <a class="tab" href="#viaturas" data-v="viaturas">Viaturas</a>
+      <a class="tab" href="#oficina" data-v="oficina">Oficina</a>
+      <a class="tab" href="#visita" data-v="visita">Visita 360°</a>
+      <a class="tab" href="#contactos" data-v="contactos">Contactos</a>
+    </nav>
+    <a class="btn" href="#oficina">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+      Marcar oficina
+    </a>
+    <button class="burger" id="burger" aria-label="Menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+</header>
+
+<main>
+<!-- ================= INÍCIO ================= -->
+<div class="view" id="v-inicio">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="pill"><span class="dot"></span>Stand novo · Oficina com anos de experiência</span>
+          <h1>O teu próximo carro <em>começa aqui.</em></h1>
+          <p class="lead">Viaturas selecionadas, verificadas na nossa própria oficina e prontas a andar. Tecnologia de diagnóstico, preço transparente, zero surpresas.</p>
+          <div class="ctas">
+            <a href="#viaturas" class="btn">Explorar viaturas
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a href="#oficina" class="btn ghost">Marcar na oficina</a>
+            <a href="#visita" class="btn ghost"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>Visita 360°</a>
+          </div>
+        </div>
+        <div class="hud">
+          <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
+          <img class="hud-img" src="img/porsche.webp" alt="Porsche Cayenne Electric em estrada">
+          <div class="hud-shade"></div>
+          <div class="hud-grid"></div>
+          <div class="scan"></div>
+          <div class="target"><span>ANÁLISE · VIATURA VERIFICADA</span><i></i></div>
+          <div class="hud-tag t1">DIAGNÓSTICO <b>✓ OK</b></div>
+          <div class="hud-tag t2">TRAVÕES <b>✓ OK</b></div>
+          <div class="hud-tag t3">HISTÓRICO <b>✓ VERIFICADO</b></div>
+          <div class="hud-tag t4">GARANTIA <b>✓ INCLUÍDA</b></div>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b id="k-stock">0</b><small>Viaturas em stock</small></div>
+        <div class="kpi"><b>100<span>%</span></b><small>Verificadas na oficina</small></div>
+        <div class="kpi"><b>18<span>m</span></b><small>Garantia</small></div>
+        <div class="kpi"><b>24<span>h</span></b><small>Resposta a pedidos</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:10px">
+    <div class="wrap">
+      <div class="glass qs">
+        <div class="field"><label>Marca</label><select id="qs-marca"><option value="">Todas</option></select></div>
+        <div class="field"><label>Combustível</label><select id="qs-comb"><option value="">Todos</option></select></div>
+        <div class="field"><label>Carroçaria</label><select id="qs-carr"><option value="">Todas</option></select></div>
+        <div class="field"><label>Preço máximo</label><select id="qs-preco"><option value="">Sem limite</option><option>15000</option><option>20000</option><option>25000</option><option>35000</option><option>50000</option><option>100000</option></select></div>
+        <button class="btn" id="qs-go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Pesquisar</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:20px">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="label">Em destaque</span><h2 class="h2">Escolhas da <em>semana</em></h2></div>
+        <a href="#viaturas" class="btn ghost">Ver todo o stock</a>
+      </div>
+      <div class="grid" id="featured"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head"><div><span class="label">Porquê nós</span><h2 class="h2">Compra com <em>confiança</em></h2></div>
+        <p class="lead">Somos um stand novo, mas com a experiência de uma oficina que já conta muitos anos.</p></div>
+      <div class="feat">
+        <div class="glass f"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h3l2-6 4 12 2-6h5"/></svg></div><h3>Diagnóstico completo</h3><p>Cada viatura passa por diagnóstico eletrónico e revisão mecânica antes da venda.</p></div>
+        <div class="glass f"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Garantia incluída</h3><p>Garantia em todas as viaturas, com assistência na nossa oficina.</p></div>
+        <div class="glass f"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></svg></div><h3>Financiamento</h3><p>Simulação imediata e ajuda a encontrar o crédito certo para ti.</p></div>
+        <div class="glass f"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></div><h3>Retoma</h3><p>Avaliamos o teu carro atual e descontamos no próximo.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap split">
+      <div>
+        <span class="label">Oficina própria</span>
+        <h2 class="h2" style="margin:12px 0 16px">Por trás do stand está a <em>Auto Neves.</em></h2>
+        <p class="lead" style="margin-bottom:24px">É lá que preparamos cada carro que vendemos, e é lá que continuamos a tratar dele depois. Marca o teu serviço online em menos de um minuto.</p>
+        <a href="#oficina" class="btn">Ir para a oficina</a>
+      </div>
+      <div class="glass teaser">
+        <div class="of-brand" style="font-size:64px">Auto <span>Neves</span></div>
+        <p class="mono" style="color:var(--mut);font-size:12px;margin:10px 0 22px;letter-spacing:.1em">MECÂNICA · DIAGNÓSTICO · MANUTENÇÃO</p>
+        <div class="chips" id="teaser-svcs"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================= VIATURAS ================= -->
+<div class="view" id="v-viaturas">
+  <section style="padding-top:50px">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="label">Stock</span><h2 class="h2">Encontra a tua <em>viatura</em></h2></div>
+        <p class="lead">Usa os filtros para afinar a pesquisa. Todas as viaturas são verificadas na oficina Auto Neves.</p>
+      </div>
+      <div class="inv">
+        <aside class="glass side" id="side">
+          <div class="side-top"><b>Filtros</b><button class="linkbtn" id="clear">Limpar tudo</button></div>
+          <h4>Marca</h4><div class="chips" id="fc-marca"></div>
+          <h4>Combustível</h4><div class="chips" id="fc-comb"></div>
+          <h4>Carroçaria</h4><div class="chips" id="fc-carr"></div>
+          <h4>Caixa</h4><div class="chips" id="fc-caixa"></div>
+          <h4>Preço (€)</h4>
+          <div class="row2"><input type="number" id="f-pmin" placeholder="Mín." min="0" step="500"><input type="number" id="f-pmax" placeholder="Máx." min="0" step="500"></div>
+          <h4>Ano</h4>
+          <div class="row2"><select id="f-amin"><option value="">Desde</option></select><select id="f-amax"><option value="">Até</option></select></div>
+          <h4>Quilómetros máx. <span class="range-out" id="o-km">Sem limite</span></h4>
+          <input type="range" id="f-km" min="10000" max="150000" step="5000" value="150000">
+          <h4>Potência mín. <span class="range-out" id="o-cv">Qualquer</span></h4>
+          <input type="range" id="f-cv" min="0" max="500" step="10" value="0">
+          <h4>Lugares</h4><div class="chips" id="fc-lug"></div>
+          <h4>Cor</h4><div class="chips" id="fc-cor"></div>
+          <h4>Equipamento</h4><div class="checks" id="fc-eq"></div>
+          <button class="btn filter-open" style="width:100%;margin-top:20px" id="side-close">Ver resultados</button>
+        </aside>
+        <div>
+          <div class="toolbar">
+            <button class="btn ghost filter-open" id="side-open"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M6 12h12M10 19h4"/></svg>Filtros</button>
+            <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="f-q" placeholder="Pesquisar marca, modelo, versão..."></div>
+            <select id="f-ord">
+              <option value="rec">Mais recentes</option>
+              <option value="pa">Preço ↑</option>
+              <option value="pd">Preço ↓</option>
+              <option value="km">Menos km</option>
+              <option value="ano">Ano mais recente</option>
+              <option value="cv">Mais potência</option>
+            </select>
+            <div class="vtoggle">
+              <button id="vg" class="on" aria-label="Grelha"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></button>
+              <button id="vl" aria-label="Lista"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg></button>
+            </div>
+          </div>
+          <div class="result-bar">
+            <span class="mono" id="count"></span>
+            <div class="active-chips" id="achips"></div>
+          </div>
+          <div class="grid" id="grid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================= OFICINA ================= -->
+<div class="view" id="v-oficina">
+  <section class="of-hero">
+    <div class="wrap">
+      <span class="pill"><span class="dot"></span>Marcações online · resposta por WhatsApp</span>
+      <div class="of-brand">Auto <span>Neves</span></div>
+      <p class="lead" style="margin-top:18px">A oficina por trás do Zumbido Rolante. Anos de experiência em mecânica, agora com marcação online. Qualquer marca, qualquer modelo, quer tenhas comprado connosco ou não.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:20px">
+    <div class="wrap">
+      <div class="head"><div><span class="label">Serviços</span><h2 class="h2">O que <em>fazemos</em></h2></div></div>
+      <div class="services" id="services"></div>
+    </div>
+  </section>
+
+  <section style="padding-top:20px" id="marcar">
+    <div class="wrap">
+      <div class="head"><div><span class="label">Marcação</span><h2 class="h2">Marca o teu <em>serviço</em></h2></div>
+        <p class="lead">Preenche o pedido e envia-o diretamente para o nosso WhatsApp. Confirmamos a hora contigo.</p></div>
+      <div class="steps">
+        <div class="glass step"><span class="n">01</span><div><h4>Preenche o pedido</h4><p>Dados do carro, serviço e hora preferida.</p></div></div>
+        <div class="glass step"><span class="n">02</span><div><h4>Envia pelo WhatsApp</h4><p>A mensagem segue pronta. Só tens de carregar em enviar.</p></div></div>
+        <div class="glass step"><span class="n">03</span><div><h4>Confirmamos</h4><p>Respondemos a confirmar a marcação.</p></div></div>
+      </div>
+      <div class="booking">
+        <form class="glass form" id="bform" novalidate>
+          <h3>Pedido de marcação</h3>
+          <p class="sub">Campos com <span class="req">*</span> são obrigatórios.</p>
+          <div class="fgrid">
+            <div class="field"><label>Nome <span class="req">*</span></label><input id="b-nome" autocomplete="name"></div>
+            <div class="field"><label>Telemóvel <span class="req">*</span></label><input id="b-tel" type="tel" inputmode="tel" placeholder="9XX XXX XXX" autocomplete="tel"></div>
+            <div class="field"><label>Marca e modelo <span class="req">*</span></label><input id="b-carro" placeholder="Ex.: Renault Clio"></div>
+            <div class="field"><label>Matrícula</label><input id="b-mat" placeholder="AA-00-AA" style="text-transform:uppercase"></div>
+            <div class="field"><label>Ano</label><input id="b-ano" type="number" inputmode="numeric" placeholder="2018"></div>
+            <div class="field"><label>Quilómetros</label><input id="b-km" type="number" inputmode="numeric" placeholder="120000"></div>
+            <div class="field full"><label>Serviço(s) <span class="req">*</span></label><div class="chips" id="b-svcs"></div></div>
+            <div class="field"><label>Data preferida <span class="req">*</span></label><input id="b-data" type="date"><p class="hint" id="b-dhint">Seg–Sex 9h–19h · Sáb 9h–13h</p></div>
+            <div class="field"><label>Precisa de carro de cortesia?</label><select id="b-cort"><option>Não</option><option>Sim, se possível</option></select></div>
+            <div class="field full"><label>Hora preferida <span class="req">*</span></label><div class="slots" id="b-slots"></div></div>
+            <div class="field full"><label>Descreve o problema (opcional)</label><textarea id="b-obs" placeholder="Ex.: barulho ao travar, luz do motor acesa..."></textarea></div>
+          </div>
+          <p class="err" id="b-err"></p>
+          <button class="btn wa" type="submit" style="width:100%;margin-top:20px;padding:15px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.6 14.2c-.2.7-1.4 1.3-2 1.4-.5 0-1 .3-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.2-1.6-1.2-3s.8-2.2 1-2.5c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.5.3.1.2.1.7-.1 1.4z"/></svg>
+            Preparar pedido para WhatsApp
+          </button>
+          <div class="done" id="b-done">
+            <b style="color:#4ade80">✓ Pedido pronto</b>
+            <p>Carrega no botão para abrir o WhatsApp com a mensagem já escrita e envia-a. Se o WhatsApp não abrir, copia o pedido e envia para +351 900 000 000.</p>
+            <div class="acts">
+              <a class="btn wa" id="b-walink" href="#" target="_blank" rel="noopener">Abrir WhatsApp</a>
+              <button class="btn ghost" type="button" id="b-copy">Copiar pedido</button>
+            </div>
+          </div>
+        </form>
+        <aside class="glass summary">
+          <h3><span class="dot"></span>Resumo do pedido</h3>
+          <div class="sum-list" id="sum"></div>
+          <p class="note">O pedido só fica marcado depois da nossa confirmação no WhatsApp.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================= VISITA 360 ================= -->
+<div class="view" id="v-visita">
+  <section style="padding-top:50px">
+    <div class="wrap">
+      <div class="head">
+        <div><span class="label">Visita virtual</span><h2 class="h2">Entra no <em>stand</em></h2></div>
+        <p class="lead">Arrasta para olhar à volta. Toca nos pontos vermelhos para ver os carros ou mudar de espaço.</p>
+      </div>
+      <div class="tour glass" id="tour">
+        <canvas id="tour-cv"></canvas>
+        <div class="tour-hs" id="tour-hs"></div>
+        <div class="tour-top">
+          <div class="tour-zones" id="tour-zones">
+            <button data-z="expo" class="on">Exposição</button>
+            <button data-z="oficina">Oficina</button>
+          </div>
+          <button class="tbtn" id="tour-fs" aria-label="Ecrã inteiro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        </div>
+        <div class="tour-hint" id="tour-hint"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 12H3m0 0l3-3m-3 3l3 3M16 12h5m0 0l-3-3m3 3l-3 3"/></svg>Arrasta para explorar</div>
+        <div class="tour-badge">DEMO · ESPAÇO ILUSTRATIVO</div>
+        <div class="tour-load" id="tour-load">A preparar a visita…</div>
+      </div>
+      <p class="note" style="margin-top:14px">Espaço ilustrativo gerado por computador. Com fotos 360° reais do stand e da oficina, a visita funciona da mesma forma, mas com o espaço verdadeiro.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ================= CONTACTOS ================= -->
+<div class="view" id="v-contactos">
+  <section style="padding-top:50px">
+    <div class="wrap">
+      <div class="head"><div><span class="label">Contactos</span><h2 class="h2">Fala <em>connosco</em></h2></div>
+        <p class="lead">Visita o stand e a oficina ou contacta-nos. Respondemos rápido.</p></div>
+      <div class="cgrid">
+        <div class="glass cbox"><h3>Telefone / WhatsApp</h3><p><a href="https://wa.me/351900000000" target="_blank" rel="noopener">+351 900 000 000</a></p><small>Número de exemplo, a substituir</small></div>
+        <div class="glass cbox"><h3>Morada</h3><p>Rua de Exemplo, 123</p><small>Morada a definir</small></div>
+        <div class="glass cbox"><h3>Horário</h3><p>Seg–Sex · 9h–19h</p><small>Sábado 9h–13h · Domingo encerrado</small></div>
+      </div>
+    </div>
+  </section>
+</div>
+</main>
+
+<footer><div class="wrap"><span>© <span id="yr"></span> ZUMBIDO ROLANTE · STAND AUTOMÓVEL</span><span>OFICINA: AUTO NEVES</span></div></footer>
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true"><div class="mbox" id="mbox"></div></div>
+
+<!-- ===== GESTÃO DE STOCK (só visível para o dono) ===== -->
+<button class="btn fab" id="fab"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Gerir stock</button>
+<div class="modal" id="admin" role="dialog" aria-modal="true">
+  <div class="mbox admin-box">
+    <div class="ad-head">
+      <h3 id="ad-title">Gerir stock</h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn sm" id="ad-new" hidden>+ Adicionar viatura</button>
+        <button class="btn ghost sm" id="ad-logout" hidden>Sair</button>
+        <button class="btn ghost sm" id="ad-close">Fechar</button>
+      </div>
+    </div>
+    <p class="ad-note" id="ad-note">Área reservada à gestão do stand.</p>
+    <form id="ad-login" hidden novalidate style="max-width:380px">
+      <div class="field" style="margin-bottom:12px"><label>Email</label><input id="lg-email" type="email" autocomplete="username"></div>
+      <div class="field" style="margin-bottom:12px"><label>Palavra-passe</label><input id="lg-pass" type="password" autocomplete="current-password"></div>
+      <p class="ad-status" id="lg-status"></p>
+      <button class="btn" type="submit" id="lg-go" style="width:100%">Entrar</button>
+      <button class="linkbtn" type="button" id="lg-forgot" style="margin-top:14px">Esqueci-me da palavra-passe</button>
+    </form>
+    <form id="ad-pass" hidden novalidate style="max-width:380px">
+      <div class="field" style="margin-bottom:12px"><label>Nova palavra-passe (mín. 8 caracteres)</label><input id="np-1" type="password" autocomplete="new-password"></div>
+      <div class="field" style="margin-bottom:12px"><label>Repetir palavra-passe</label><input id="np-2" type="password" autocomplete="new-password"></div>
+      <p class="ad-status" id="np-status"></p>
+      <button class="btn" type="submit" id="np-go" style="width:100%">Guardar palavra-passe</button>
+    </form>
+    <div id="ad-list"></div>
+    <form id="ad-form" hidden novalidate>
+      <div class="fgrid">
+        <div class="field"><label>Marca <span class="req">*</span></label><input id="af-marca" placeholder="BMW"></div>
+        <div class="field"><label>Modelo <span class="req">*</span></label><input id="af-modelo" placeholder="X3 20 xDrive"></div>
+        <div class="field"><label>Versão</label><input id="af-versao" placeholder="M Sport"></div>
+        <div class="field"><label>Preço (€) <span class="req">*</span></label><input id="af-preco" type="number" inputmode="numeric"></div>
+        <div class="field"><label>Ano <span class="req">*</span></label><input id="af-ano" type="number" inputmode="numeric"></div>
+        <div class="field"><label>Quilómetros</label><input id="af-km" type="number" inputmode="numeric"></div>
+        <div class="field"><label>Combustível</label><select id="af-comb"></select></div>
+        <div class="field"><label>Caixa</label><select id="af-caixa"></select></div>
+        <div class="field"><label>Carroçaria</label><select id="af-carr"></select></div>
+        <div class="field"><label>Potência (cv)</label><input id="af-cv" type="number" inputmode="numeric"></div>
+        <div class="field"><label>Lugares</label><input id="af-lug" type="number" inputmode="numeric" value="5"></div>
+        <div class="field"><label>Cor</label><input id="af-cor" placeholder="Cinzento"></div>
+        <div class="field"><label>Etiqueta (opcional)</label><input id="af-dest" placeholder="Novo, Destaque, Promoção..."></div>
+        <div class="field"><label>Estado</label><select id="af-vend"><option value="0">Disponível</option><option value="1">Vendido</option></select></div>
+        <div class="field full"><label>Equipamento (separado por vírgulas)</label><input id="af-eq" placeholder="GPS, Câmara traseira, Bancos aquecidos"></div>
+        <div class="field full"><label>Descrição</label><textarea id="af-desc"></textarea></div>
+        <div class="field full"><label>Fotos (a primeira é a capa)</label>
+          <label class="drop"><input type="file" id="af-files" accept="image/*" multiple hidden>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 8"/></svg>
+            Toca para escolher fotos</label>
+          <div class="ph-list" id="af-ph"></div>
+        </div>
+      </div>
+      <p class="ad-status" id="af-status"></p>
+      <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn" type="submit" id="af-save">Guardar viatura</button>
+        <button class="btn ghost" type="button" id="af-cancel">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ================== LIGAÇÃO À SUPABASE ==================
+   Preencher com os dados do projeto (Project Settings → API).
+   A chave pública (anon / publishable) pode estar no site: a segurança está nas regras da base de dados. */
+const SUPABASE_URL = "https://bxudgscayleaytisbtyk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_uUQ1gfkTQA8OQ2-PbQC6qQ_11siaR3d";
+
+const AUTH_LINK = /type=(invite|recovery|signup)/.test(location.hash);
+
+/* ================== CONFIGURAÇÃO ================== */
+const WHATSAPP = "351900000000";      // número do stand/oficina (exemplo)
+const WHATSAPP_TXT = "+351 900 000 000";
+const GARANTIA = "18 meses";
+const COMBS = ["Gasolina","Diesel","Híbrido","Híbrido plug-in","Elétrico","GPL"];
+const CAIXAS = ["Manual","Automática"];
+const CARRS = ["Hatchback","Sedan","SUV","Carrinha","Coupé","Cabrio","Monovolume","Comercial"];
+
+/* ================== STOCK DE EXEMPLO (dados fictícios) ==================
+   Mostrado quando a base de dados do site não está disponível. */
+const CARROS = [
+  {id:"c11",criado:11,marca:"Porsche",modelo:"Cayenne Electric",versao:"Base",ano:2026,km:3500,comb:"Elétrico",caixa:"Automática",cv:435,lug:5,carr:"SUV",cor:"Cinzento",hex:"#4a5058",preco:119900,destaque:"Premium",fotos:["img/porsche.webp"],
+   eq:["GPS","Câmara 360º","Bancos aquecidos","Teto panorâmico","Faróis LED","Cruise control"],desc:"SUV 100% elétrico com desempenho Porsche, carregamento rápido e interior topo de gama. Praticamente novo."},
+  {id:"c06",criado:10,marca:"Mercedes-Benz",modelo:"GLE 300 d 4MATIC",versao:"AMG Line",ano:2024,km:18500,comb:"Diesel",caixa:"Automática",cv:269,lug:5,carr:"SUV",cor:"Branco",hex:"#ececec",preco:84900,destaque:"Destaque",fotos:["img/mercedes.jpg"],
+   eq:["GPS","Câmara 360º","Bancos aquecidos","Teto panorâmico","Faróis LED","Cruise control","Apple CarPlay / Android Auto"],desc:"SUV de luxo com tração integral, pack AMG Line, faróis Multibeam LED e ecrã MBUX duplo."},
+  {id:"c03",criado:9,marca:"BMW",modelo:"X3 20 xDrive",versao:"M Sport",ano:2025,km:12000,comb:"Gasolina",caixa:"Automática",cv:208,lug:5,carr:"SUV",cor:"Cinzento",hex:"#8a8d92",preco:62900,destaque:"Novo",fotos:["img/bmw.webp"],
+   eq:["GPS","Câmara traseira","Bancos aquecidos","Faróis LED","Cruise control","Apple CarPlay / Android Auto"],desc:"Nova geração do X3 com pack M Sport, tração xDrive e o mais recente sistema iDrive."},
+  {id:"c10",criado:8,marca:"Citroën",modelo:"C5 Aircross 1.5 BlueHDi",versao:"Shine",ano:2021,km:51000,comb:"Diesel",caixa:"Automática",cv:130,lug:5,carr:"SUV",cor:"Branco",hex:"#ececec",preco:23900,
+   eq:["GPS","Câmara traseira","Teto panorâmico","Cruise control"],desc:"Conforto acima da média, com suspensão progressiva e muito espaço."},
+  {id:"c09",criado:7,marca:"Skoda",modelo:"Octavia Break 2.0 TDI",versao:"Style",ano:2020,km:98000,comb:"Diesel",caixa:"Automática",cv:150,lug:5,carr:"Carrinha",cor:"Cinzento",hex:"#7c7f86",preco:21900,
+   eq:["GPS","Apple CarPlay / Android Auto","Bancos aquecidos","Cruise control","Sensores de estacionamento"],desc:"Carrinha familiar enorme por dentro, ótima para viagens."},
+  {id:"c07",criado:6,marca:"Tesla",modelo:"Model 3",versao:"Standard Range Plus",ano:2021,km:42000,comb:"Elétrico",caixa:"Automática",cv:325,lug:5,carr:"Sedan",cor:"Vermelho",hex:"#b31010",preco:29900,
+   eq:["GPS","Câmara 360º","Bancos aquecidos","Teto panorâmico","Cruise control"],desc:"100% elétrico, com Autopilot e atualizações remotas."},
+  {id:"c01",criado:5,marca:"Peugeot",modelo:"308 1.5 BlueHDi",versao:"Allure",ano:2021,km:48000,comb:"Diesel",caixa:"Manual",cv:130,lug:5,carr:"Hatchback",cor:"Cinzento",hex:"#c9ccd1",preco:18900,
+   eq:["GPS","Apple CarPlay / Android Auto","Câmara traseira","Cruise control","Sensores de estacionamento"],desc:"Muito económico e bem equipado. Revisões em dia e pneus novos."},
+  {id:"c04",criado:4,marca:"Toyota",modelo:"Yaris 1.5 Hybrid",versao:"Comfort",ano:2022,km:19800,comb:"Híbrido",caixa:"Automática",cv:116,lug:5,carr:"Hatchback",cor:"Branco",hex:"#f1f1f1",preco:19750,
+   eq:["Apple CarPlay / Android Auto","Câmara traseira","Cruise control"],desc:"Consumos muito baixos em cidade, caixa automática e Toyota Safety Sense."},
+  {id:"c08",criado:3,marca:"Seat",modelo:"Arona 1.0 TSI",versao:"FR",ano:2020,km:57000,comb:"Gasolina",caixa:"Manual",cv:110,lug:5,carr:"SUV",cor:"Cinzento",hex:"#d4d4d8",preco:16490,
+   eq:["Apple CarPlay / Android Auto","Câmara traseira","Faróis LED"],desc:"Crossover com visual FR, posição de condução elevada e bom espaço."},
+  {id:"c05",criado:2,marca:"Volkswagen",modelo:"Golf 2.0 TDI",versao:"Life",ano:2019,km:89000,comb:"Diesel",caixa:"Manual",cv:115,lug:5,carr:"Hatchback",cor:"Azul",hex:"#2b5aa8",preco:16900,
+   eq:["GPS","Cruise control","Sensores de estacionamento"],desc:"Um clássico fiável e espaçoso, com climatização automática."},
+  {id:"c02",criado:1,marca:"Renault",modelo:"Clio 1.0 TCe",versao:"Intens",ano:2022,km:22500,comb:"Gasolina",caixa:"Manual",cv:90,lug:5,carr:"Hatchback",cor:"Vermelho",hex:"#e10600",preco:15490,
+   eq:["Apple CarPlay / Android Auto","Câmara traseira","Faróis LED","Sensores de estacionamento"],desc:"Citadino ágil, com faróis LED e jantes de liga leve. Ideal como primeiro carro."}
+];
+
+const SERVICOS = [
+  {n:"Revisão",d:"Óleo, filtros e verificação geral",i:'<path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/>'},
+  {n:"Diagnóstico eletrónico",d:"Leitura de avarias e luzes no painel",i:'<path d="M4 12h3l2-6 4 12 2-6h5"/>'},
+  {n:"Travões",d:"Pastilhas, discos e líquido",i:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>'},
+  {n:"Pneus e alinhamento",d:"Montagem, equilibragem e alinhamento",i:'<circle cx="12" cy="12" r="9"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/>'},
+  {n:"Embraiagem / distribuição",d:"Substituição e afinação",i:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>'},
+  {n:"Ar condicionado",d:"Carga de gás e higienização",i:'<path d="M12 2v20M4.9 4.9l14.2 14.2M2 12h20M4.9 19.1L19.1 4.9"/>'},
+  {n:"Pré-inspeção",d:"Preparação para a inspeção periódica",i:'<path d="M9 12l2 2 4-4"/><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/>'},
+  {n:"Mecânica geral",d:"Suspensão, escape, motor e mais",i:'<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>'}
+];
+
+/* ================== UTIL ================== */
+const $ = s => document.querySelector(s);
+const fmt = n => Number(n||0).toLocaleString("pt-PT");
+const eur = n => fmt(n) + " €";
+const esc = s => String(s??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const mensal = p => Math.round((p*0.85)*(0.0075/(1-Math.pow(1.0075,-84)))); // 15% entrada, 84 meses, TAN ~9% (simulação)
+const FOTOS_PREFIX = SUPABASE_URL ? SUPABASE_URL.replace(/\/$/,"") + "/storage/v1/object/public/fotos/" : null;
+const safeUrl = u => {
+  if(typeof u!=="string") return "";
+  if(/^img\/[\w.\-]+$/.test(u)) return u;
+  if(FOTOS_PREFIX && u.startsWith(FOTOS_PREFIX) && /^[\w.\-\/]+$/.test(u.slice(FOTOS_PREFIX.length))) return u;
+  return "";
+};
+
+let CARS = CARROS.slice();
+const disp = () => CARS.filter(c=>!c.vendido);
+const uniq = k => [...new Set(CARS.map(c=>c[k]).filter(v=>v!==""&&v!=null))].sort((a,b)=>String(a).localeCompare(String(b),"pt",{numeric:true}));
+
+let svgN = 0;
+const CAR_B = {
+    Hatchback:"M40 118 Q38 96 60 90 L118 82 Q150 52 200 48 L262 48 Q296 50 318 82 L352 88 Q372 92 372 112 L372 124 Q372 130 364 130 L48 130 Q40 130 40 118Z",
+    Sedan:"M30 116 Q30 98 52 94 L110 86 Q150 56 196 54 L250 54 Q292 58 322 86 L360 92 Q380 96 380 114 L380 124 Q380 130 372 130 L40 130 Q30 130 30 116Z",
+    SUV:"M40 120 Q38 88 62 84 L112 78 Q136 42 190 40 L276 40 Q306 42 324 76 L352 82 Q372 86 372 108 L372 124 Q372 130 364 130 L48 130 Q40 130 40 120Z",
+    Carrinha:"M34 118 Q34 94 56 90 L112 84 Q142 54 186 50 L318 48 Q338 50 346 80 L360 86 Q378 90 378 110 L378 124 Q378 130 370 130 L42 130 Q34 130 34 118Z"
+  };
+const CAR_W = {
+    Hatchback:"M128 84 Q156 58 200 56 L250 56 L250 84Z M260 56 Q290 58 306 84 L260 84Z",
+    Sedan:"M122 88 Q156 62 198 60 L244 60 L244 88Z M254 60 Q288 62 310 88 L254 88Z",
+    SUV:"M124 80 Q144 48 190 47 L248 47 L248 80Z M258 47 L276 47 Q300 48 314 80 L258 80Z",
+    Carrinha:"M122 86 Q148 60 188 57 L236 56 L236 86Z M246 56 L298 55 L298 86 L246 86Z M308 55 L320 55 Q330 58 336 84 L308 86Z"
+  };
+function carSVG(hex, tipo){
+  const id = "g"+(svgN++);
+  const b = CAR_B[tipo]||CAR_B.Hatchback, w = CAR_W[tipo]||CAR_W.Hatchback;
+  const col = /^#[0-9a-f]{6}$/i.test(hex) ? hex : "#8a8d92";
+  return `<svg viewBox="0 0 410 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient></defs>
+  <ellipse cx="205" cy="146" rx="178" ry="8" fill="rgba(0,0,0,.6)"/>
+  <path d="${b}" fill="${col}"/><path d="${b}" fill="url(#${id})"/>
+  <path d="${w}" fill="#0b0f15" opacity=".92"/>
+  <path d="M58 104 L362 104" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+  <rect x="352" y="96" width="18" height="7" rx="3" fill="#dff3ff"/>
+  <rect x="40" y="98" width="13" height="6" rx="2" fill="#ff1a0d"/>
+  <g><circle cx="110" cy="130" r="22" fill="#09090b"/><circle cx="110" cy="130" r="13" fill="#5d5d66"/><circle cx="110" cy="130" r="4" fill="#09090b"/></g>
+  <g><circle cx="304" cy="130" r="22" fill="#09090b"/><circle cx="304" cy="130" r="13" fill="#5d5d66"/><circle cx="304" cy="130" r="4" fill="#09090b"/></g>
+  </svg>`;
+}
+const cover = c => (c.fotos||[]).map(safeUrl).find(Boolean) || "";
+const visual = (c, cls="") => cover(c) ? `<img class="${cls}" src="${esc(cover(c))}" alt="${esc(c.marca+" "+c.modelo)}" loading="lazy">` : carSVG(c.hex,c.carr);
+
+function cardHTML(c){
+  return `<article class="card" data-id="${esc(c.id)}">
+    <div class="card-img">${c.destaque&&!c.vendido?`<span class="badge">${esc(c.destaque)}</span>`:""}<span class="fuel">${esc(String(c.comb).toUpperCase())}</span>${visual(c)}${c.vendido?'<div class="sold">VENDIDO</div>':""}</div>
+    <div class="card-body">
+      <h3>${esc(c.marca)} ${esc(c.modelo)}</h3>
+      <div class="sub">${esc(c.versao)}${c.versao?" · ":""}${esc(c.carr)}</div>
+      <div class="specs">
+        <div class="spec"><small>Ano</small><b>${esc(c.ano)}</b></div>
+        <div class="spec"><small>Km</small><b>${fmt(c.km)}</b></div>
+        <div class="spec"><small>Caixa</small><b>${c.caixa==="Automática"?"Auto":"Manual"}</b></div>
+      </div>
+      <div class="price-row"><span class="price">${eur(c.preco)}</span><span class="mensal">desde<br><b>${mensal(c.preco)} €/mês</b></span></div>
+    </div></article>`;
+}
+function bindCards(root){ root.querySelectorAll(".card").forEach(el=>el.addEventListener("click",()=>openCar(el.dataset.id))); }
+
+/* ================== ROUTER ================== */
+const VIEWS = ["inicio","viaturas","oficina","visita","contactos"];
+function route(){
+  const h = location.hash.replace("#","") || "inicio";
+  if(h==="admin"){ openAdmin(); history.replaceState(null,"",location.pathname+location.search); }
+  const v = VIEWS.includes(h) ? h : (h==="marcar" ? "oficina" : "inicio");
+  document.querySelectorAll(".view").forEach(el=>el.classList.toggle("on", el.id==="v-"+v));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.v===v));
+  $("#tabs").classList.remove("open");
+  closeSide();
+  T.visible = v==="visita";
+  if(T.visible) openTour();
+  window.scrollTo({top:0,behavior:"instant"});
+}
+window.addEventListener("hashchange", route);
+$("#burger").addEventListener("click",()=>$("#tabs").classList.toggle("open"));
+
+/* ================== INÍCIO ================== */
+$("#yr").textContent = new Date().getFullYear();
+[...$("#qs-preco").options].forEach(o=>{ if(o.value) o.textContent = "Até "+eur(+o.value); });
+$("#teaser-svcs").innerHTML = SERVICOS.slice(0,6).map(s=>`<span class="chip">${s.n}</span>`).join("");
+function fillSelect(sel, vals, first){
+  const cur = sel.value; sel.innerHTML = ""; sel.add(new Option(first,""));
+  vals.forEach(v=>sel.add(new Option(v,v))); if(vals.map(String).includes(cur)) sel.value = cur;
+}
+function buildHome(){
+  $("#k-stock").textContent = disp().length;
+  const f = disp().filter(c=>c.destaque || cover(c))
+    .sort((a,b)=>(cover(b)?1:0)-(cover(a)?1:0) || (b.criado||0)-(a.criado||0)).slice(0,3);
+  const el = $("#featured"); el.innerHTML = f.map(cardHTML).join(""); bindCards(el);
+  fillSelect($("#qs-marca"),uniq("marca"),"Todas");
+  fillSelect($("#qs-comb"),uniq("comb"),"Todos");
+  fillSelect($("#qs-carr"),uniq("carr"),"Todas");
+}
+$("#qs-go").addEventListener("click",()=>{
+  resetFilters();
+  if($("#qs-marca").value) F.marca.add($("#qs-marca").value);
+  if($("#qs-comb").value) F.comb.add($("#qs-comb").value);
+  if($("#qs-carr").value) F.carr.add($("#qs-carr").value);
+  if($("#qs-preco").value) $("#f-pmax").value = $("#qs-preco").value;
+  syncChips(); render();
+  location.hash = "viaturas";
+});
+
+/* ================== VIATURAS: FILTROS ================== */
+const F = {marca:new Set(),comb:new Set(),carr:new Set(),caixa:new Set(),lug:new Set(),cor:new Set(),eq:new Set()};
+function buildChips(key, el, vals){
+  el.innerHTML = vals.map(v=>`<button class="chip" data-k="${key}" data-v="${esc(v)}">${esc(v)}${key==="lug"?" lugares":""}</button>`).join("");
+}
+function buildFilters(){
+  buildChips("marca",$("#fc-marca"),uniq("marca"));
+  buildChips("comb",$("#fc-comb"),uniq("comb"));
+  buildChips("carr",$("#fc-carr"),uniq("carr"));
+  buildChips("caixa",$("#fc-caixa"),uniq("caixa"));
+  buildChips("lug",$("#fc-lug"),uniq("lug").map(String));
+  buildChips("cor",$("#fc-cor"),uniq("cor"));
+  const EQ = [...new Set(CARS.flatMap(c=>c.eq||[]))].sort((a,b)=>a.localeCompare(b,"pt"));
+  $("#fc-eq").innerHTML = EQ.map(e=>`<label class="check"><input type="checkbox" value="${esc(e)}">${esc(e)}</label>`).join("");
+  const anos = uniq("ano").map(Number).filter(Boolean), ys=[];
+  if(anos.length) for(let a=Math.min(...anos); a<=Math.max(...anos); a++) ys.push(a);
+  fillSelect($("#f-amin"),ys,"Desde"); fillSelect($("#f-amax"),ys,"Até");
+  syncChips();
+}
+$("#side").addEventListener("click",e=>{
+  const b = e.target.closest(".chip"); if(!b) return;
+  const set = F[b.dataset.k], v = b.dataset.v;
+  set.has(v) ? set.delete(v) : set.add(v);
+  b.classList.toggle("on"); render();
+});
+$("#fc-eq").addEventListener("change",e=>{ e.target.checked ? F.eq.add(e.target.value) : F.eq.delete(e.target.value); render(); });
+["#f-pmin","#f-pmax","#f-q","#f-km","#f-cv"].forEach(s=>$(s).addEventListener("input",render));
+["#f-amin","#f-amax","#f-ord"].forEach(s=>$(s).addEventListener("change",render));
+$("#clear").addEventListener("click",()=>{ resetFilters(); syncChips(); render(); });
+$("#vg").addEventListener("click",()=>{ $("#grid").classList.remove("list"); $("#vg").classList.add("on"); $("#vl").classList.remove("on"); });
+$("#vl").addEventListener("click",()=>{ $("#grid").classList.add("list"); $("#vl").classList.add("on"); $("#vg").classList.remove("on"); });
+
+function resetFilters(){
+  Object.values(F).forEach(s=>s.clear());
+  ["#f-pmin","#f-pmax","#f-q","#f-amin","#f-amax"].forEach(s=>$(s).value="");
+  $("#f-km").value=150000; $("#f-cv").value=0;
+}
+function syncChips(){
+  document.querySelectorAll("#side .chip").forEach(b=>b.classList.toggle("on",F[b.dataset.k].has(b.dataset.v)));
+  document.querySelectorAll("#fc-eq input").forEach(i=>i.checked=F.eq.has(i.value));
+}
+
+function render(){
+  const q=$("#f-q").value.trim().toLowerCase(), pmin=+$("#f-pmin").value||0, pmax=+$("#f-pmax").value||Infinity,
+        amin=+$("#f-amin").value||0, amax=+$("#f-amax").value||Infinity, km=+$("#f-km").value, cv=+$("#f-cv").value;
+  $("#o-km").textContent = km>=150000 ? "Sem limite" : fmt(km)+" km";
+  $("#o-cv").textContent = cv===0 ? "Qualquer" : cv+" cv";
+  let L = CARS.filter(c=>
+    (!q || `${c.marca} ${c.modelo} ${c.versao} ${c.carr} ${c.cor}`.toLowerCase().includes(q)) &&
+    (!F.marca.size||F.marca.has(c.marca)) && (!F.comb.size||F.comb.has(c.comb)) &&
+    (!F.carr.size||F.carr.has(c.carr)) && (!F.caixa.size||F.caixa.has(c.caixa)) &&
+    (!F.lug.size||F.lug.has(String(c.lug))) && (!F.cor.size||F.cor.has(c.cor)) &&
+    [...F.eq].every(e=>(c.eq||[]).includes(e)) &&
+    c.preco>=pmin && c.preco<=pmax && c.ano>=amin && c.ano<=amax &&
+    (km>=150000 || c.km<=km) && c.cv>=cv);
+  const o=$("#f-ord").value;
+  const S={pa:(a,b)=>a.preco-b.preco,pd:(a,b)=>b.preco-a.preco,km:(a,b)=>a.km-b.km,ano:(a,b)=>b.ano-a.ano,cv:(a,b)=>b.cv-a.cv,rec:(a,b)=>(b.criado||0)-(a.criado||0)};
+  L.sort((a,b)=>(a.vendido?1:0)-(b.vendido?1:0) || S[o](a,b));
+  $("#count").innerHTML = `<b>${L.length}</b> de ${CARS.length} viaturas`;
+
+  const ac=[];
+  Object.entries(F).forEach(([k,s])=>s.forEach(v=>ac.push({t:k==="lug"?v+" lugares":v,k,v})));
+  if(pmin) ac.push({t:"≥ "+eur(pmin),k:"pmin"}); if(pmax<Infinity) ac.push({t:"≤ "+eur(pmax),k:"pmax"});
+  if(amin) ac.push({t:"Desde "+amin,k:"amin"}); if(amax<Infinity) ac.push({t:"Até "+amax,k:"amax"});
+  if(km<150000) ac.push({t:"≤ "+fmt(km)+" km",k:"km"}); if(cv) ac.push({t:"≥ "+cv+" cv",k:"cv"});
+  if(q) ac.push({t:`"${q}"`,k:"q"});
+  $("#achips").innerHTML = ac.map((a,i)=>`<span class="achip" data-i="${i}">${esc(a.t)}<span>×</span></span>`).join("");
+  $("#achips").querySelectorAll(".achip").forEach(el=>el.addEventListener("click",()=>{
+    const a=ac[+el.dataset.i];
+    if(F[a.k]) F[a.k].delete(a.v);
+    else ({pmin:()=>$("#f-pmin").value="",pmax:()=>$("#f-pmax").value="",amin:()=>$("#f-amin").value="",amax:()=>$("#f-amax").value="",
+           km:()=>$("#f-km").value=150000,cv:()=>$("#f-cv").value=0,q:()=>$("#f-q").value=""})[a.k]();
+    syncChips(); render();
+  }));
+
+  const g=$("#grid");
+  g.innerHTML = L.length ? L.map(cardHTML).join("") : `<div class="empty">Nenhuma viatura corresponde à pesquisa.<br><br><button class="btn ghost sm" id="clear2">Limpar filtros</button></div>`;
+  const c2=$("#clear2"); if(c2) c2.addEventListener("click",()=>$("#clear").click());
+  bindCards(g);
+}
+
+function openSide(){ $("#side").classList.add("open"); $("#scrim").classList.add("on"); }
+function closeSide(){ $("#side").classList.remove("open"); $("#scrim").classList.remove("on"); }
+$("#side-open").addEventListener("click",openSide);
+$("#side-close").addEventListener("click",closeSide);
+$("#scrim").addEventListener("click",closeSide);
+
+function refreshAll(){ buildHome(); buildFilters(); render(); if($("#admin").classList.contains("open")) renderAdminList(); if(T.ready && T.scene==="expo") setScene("expo",true); }
+
+/* ================== FICHA DA VIATURA ================== */
+const modal=$("#modal");
+function openCar(id){
+  const c=CARS.find(x=>String(x.id)===String(id)); if(!c) return;
+  const fotos=(c.fotos||[]).map(safeUrl).filter(Boolean);
+  const msg=encodeURIComponent(`Olá! Tenho interesse no ${c.marca} ${c.modelo} ${c.versao||""} (${c.ano}, ${fmt(c.km)} km) a ${eur(c.preco)}. Ainda está disponível?`);
+  $("#mbox").innerHTML=`
+    <div class="mimg">${fotos.length?`<img class="main" id="m-main" src="${esc(fotos[0])}" alt="">`:carSVG(c.hex,c.carr)}
+      ${c.destaque&&!c.vendido?`<span class="badge" style="z-index:2">${esc(c.destaque)}</span>`:""}${c.vendido?'<div class="sold">VENDIDO</div>':""}
+      <button class="mclose" aria-label="Fechar" style="z-index:4">×</button></div>
+    ${fotos.length>1?`<div class="thumbs">${fotos.map((f,i)=>`<img src="${esc(f)}" data-src="${esc(f)}" class="${i?"":"on"}" alt="">`).join("")}</div>`:""}
+    <div class="mbody">
+      <div>
+        <span class="label">${esc(c.carr)} · ${esc(c.cor)}</span>
+        <h3 style="margin-top:10px">${esc(c.marca)} ${esc(c.modelo)}</h3>
+        <div class="sub">${esc(c.versao)}</div>
+        <div class="mspecs">
+          <div class="spec"><small>Ano</small><b>${esc(c.ano)}</b></div>
+          <div class="spec"><small>Km</small><b>${fmt(c.km)}</b></div>
+          <div class="spec"><small>Combustível</small><b>${esc(c.comb)}</b></div>
+          <div class="spec"><small>Caixa</small><b>${esc(c.caixa)}</b></div>
+          <div class="spec"><small>Potência</small><b>${c.cv?esc(c.cv)+" cv":"—"}</b></div>
+          <div class="spec"><small>Lugares</small><b>${esc(c.lug||"—")}</b></div>
+        </div>
+        <p class="sub" style="color:var(--mut);font-size:14.5px">${esc(c.desc)}</p>
+        ${(c.eq||[]).length?`<span class="label" style="display:block;margin-top:18px">Equipamento</span><div class="equip">${c.eq.map(e=>`<span>${esc(e)}</span>`).join("")}</div>`:""}
+      </div>
+      <div class="glass mside">
+        <span class="mono" style="font-size:11px;color:var(--mut);letter-spacing:.12em">PREÇO</span>
+        <div class="price">${eur(c.preco)}</div>
+        <div class="calc">
+          <div class="row"><span>Entrada (15%)</span><b>${eur(Math.round(c.preco*.15))}</b></div>
+          <div class="row"><span>Prazo</span><b>84 meses</b></div>
+          <div class="row"><span>Mensalidade estimada</span><b class="big">${mensal(c.preco)} €</b></div>
+        </div>
+        <div class="row" style="display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin-bottom:16px"><span>Garantia</span><b style="color:var(--txt)">${GARANTIA}</b></div>
+        ${c.vendido?`<div class="btn ghost" style="width:100%;cursor:default">Viatura vendida</div>`:`<a class="btn wa" style="width:100%" href="https://wa.me/${WHATSAPP}?text=${msg}" target="_blank" rel="noopener">Pedir informações</a>`}
+        <p class="note">Simulação meramente indicativa. Tel.: ${WHATSAPP_TXT}</p>
+      </div>
+    </div>`;
+  modal.classList.add("open");
+  modal.querySelector(".mclose").addEventListener("click",closeModal);
+  modal.querySelectorAll(".thumbs img").forEach(t=>t.addEventListener("click",()=>{
+    $("#m-main").src=t.dataset.src; modal.querySelectorAll(".thumbs img").forEach(x=>x.classList.toggle("on",x===t));
+  }));
+}
+function closeModal(){ modal.classList.remove("open"); }
+modal.addEventListener("click",e=>{ if(e.target===modal) closeModal(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeModal(); closeSide(); closeAdmin(); } });
+
+/* ================== SUPABASE + GESTÃO (só administradores) ================== */
+let sb=null, isAdmin=false, cloudEmpty=false, editingId=null, editPhotos=[];
+function normalize(d){
+  if(!d || !d.marca || !d.modelo) return null;
+  const s=v=>typeof v==="string"?v.slice(0,300):"", n=v=>Number.isFinite(+v)?+v:0;
+  return {id:String(d.id), marca:s(d.marca), modelo:s(d.modelo), versao:s(d.versao), ano:n(d.ano), km:n(d.km), comb:s(d.comb), caixa:s(d.caixa),
+    cv:n(d.cv), lug:n(d.lug), carr:s(d.carr), cor:s(d.cor), hex:s(d.hex), preco:n(d.preco), destaque:s(d.destaque),
+    eq:Array.isArray(d.eq)?d.eq.filter(x=>typeof x==="string").map(x=>x.slice(0,60)).slice(0,40):[],
+    desc:typeof d.descricao==="string"?d.descricao.slice(0,3000):"", fotos:Array.isArray(d.fotos)?d.fotos.map(safeUrl).filter(Boolean).slice(0,20):[],
+    vendido:!!d.vendido, criado:n(d.criado)};
+}
+async function loadCars(){
+  if(!sb) return;
+  const {data,error}=await sb.from("carros").select("*");
+  if(error){ console.warn("carros",error.message); return; }
+  cloudEmpty = !data.length;
+  if(data.length){ CARS=data.map(normalize).filter(Boolean); }
+  refreshAll();
+}
+async function checkAdmin(){
+  isAdmin=false;
+  try{
+    const {data:{user}}=await sb.auth.getUser();
+    if(user){ const {data}=await sb.from("admins").select("user_id").eq("user_id",user.id).maybeSingle(); isAdmin=!!data; }
+  }catch(_){}
+  $("#fab").style.display=isAdmin?"inline-flex":"none";
+  return isAdmin;
+}
+async function initCloud(){
+  if(!SUPABASE_URL || !SUPABASE_KEY || !window.supabase) return;
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  sb.auth.onAuthStateChange(ev=>{ if(ev==="PASSWORD_RECOVERY") setTimeout(showSetPass,0); });
+  await loadCars();
+  if(AUTH_LINK){
+    const {data:{session}}=await sb.auth.getSession();
+    history.replaceState(null,"",location.pathname+location.search);
+    if(session){ showSetPass(); return; }
+  }
+  await checkAdmin();
+}
+function showSetPass(){
+  admin.classList.add("open");
+  $("#ad-title").textContent="Definir palavra-passe";
+  $("#ad-note").textContent="Escolhe a palavra-passe para entrares na gestão do stock.";
+  $("#ad-pass").hidden=false; $("#ad-login").hidden=true; $("#ad-list").hidden=true; $("#ad-form").hidden=true; $("#ad-new").hidden=true; $("#ad-logout").hidden=true;
+}
+$("#ad-pass").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const a=$("#np-1").value, b=$("#np-2").value, st=$("#np-status"); st.style.color="#ff6b61";
+  if(a.length<8){ st.textContent="A palavra-passe tem de ter pelo menos 8 caracteres."; return; }
+  if(a!==b){ st.textContent="As palavras-passe não coincidem."; return; }
+  $("#np-go").disabled=true; st.style.color=""; st.textContent="A guardar…";
+  const {error}=await sb.auth.updateUser({password:a});
+  $("#np-go").disabled=false;
+  if(error){ st.style.color="#ff6b61"; st.textContent="Não foi possível guardar. Pede um novo link."; return; }
+  $("#np-1").value=$("#np-2").value=""; $("#ad-pass").hidden=true;
+  if(await checkAdmin()) showList(); else showLogin("Palavra-passe guardada, mas esta conta não tem acesso à gestão.");
+});
+
+/* ---- painel ---- */
+const admin=$("#admin");
+async function openAdmin(){
+  admin.classList.add("open");
+  if(!sb){ showLogin("A gestão ainda não está ligada à base de dados."); return; }
+  if(await checkAdmin()) showList(); else showLogin();
+}
+function closeAdmin(){ admin.classList.remove("open"); }
+$("#fab").addEventListener("click",openAdmin);
+$("#ad-close").addEventListener("click",closeAdmin);
+admin.addEventListener("click",e=>{ if(e.target===admin) closeAdmin(); });
+$("#ad-new").addEventListener("click",()=>openForm(null));
+$("#af-cancel").addEventListener("click",showList);
+fillSelect($("#af-comb"),COMBS,"—"); fillSelect($("#af-caixa"),CAIXAS,"—"); fillSelect($("#af-carr"),CARRS,"—");
+
+function showLogin(msg){
+  $("#ad-title").textContent="Entrar na gestão";
+  $("#ad-note").textContent="Área reservada à gestão do stand.";
+  $("#ad-pass").hidden=true; $("#ad-login").hidden=false; $("#ad-list").hidden=true; $("#ad-form").hidden=true; $("#ad-new").hidden=true; $("#ad-logout").hidden=true;
+  $("#lg-status").textContent=msg||""; $("#lg-status").style.color=msg?"#ff6b61":"";
+}
+$("#ad-login").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const st=$("#lg-status"); st.style.color=""; st.textContent="A entrar…"; $("#lg-go").disabled=true;
+  const {error}=await sb.auth.signInWithPassword({email:$("#lg-email").value.trim(),password:$("#lg-pass").value});
+  $("#lg-go").disabled=false;
+  if(error){ st.style.color="#ff6b61"; st.textContent="Email ou palavra-passe incorretos."; return; }
+  if(await checkAdmin()){ $("#lg-pass").value=""; showList(); }
+  else { await sb.auth.signOut(); st.style.color="#ff6b61"; st.textContent="Esta conta não tem acesso à gestão."; }
+});
+$("#lg-forgot").addEventListener("click",async()=>{
+  const st=$("#lg-status"), em=$("#lg-email").value.trim();
+  if(!em){ st.style.color="#ff6b61"; st.textContent="Escreve primeiro o teu email."; return; }
+  await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});
+  st.style.color=""; st.textContent="Se o email tiver acesso, vais receber um link para definir nova palavra-passe.";
+});
+$("#ad-logout").addEventListener("click",async()=>{ await sb.auth.signOut(); isAdmin=false; $("#fab").style.display="none"; closeAdmin(); });
+
+function showList(){
+  $("#ad-pass").hidden=true; $("#ad-login").hidden=true; $("#ad-form").hidden=true; $("#ad-list").hidden=false; $("#ad-new").hidden=false; $("#ad-logout").hidden=false;
+  $("#ad-title").textContent="Gerir stock";
+  $("#ad-note").textContent="As alterações aparecem logo no site.";
+  renderAdminList();
+}
+function renderAdminList(){
+  const el=$("#ad-list");
+  if(!isAdmin) return;
+  if(cloudEmpty){
+    el.innerHTML=`<div class="empty">Ainda não há viaturas guardadas.<br><br><button class="btn sm" id="ad-seed">Importar viaturas de exemplo</button></div>`;
+    $("#ad-seed").addEventListener("click",seedExamples); return;
+  }
+  const L=CARS.slice().sort((a,b)=>(b.criado||0)-(a.criado||0));
+  el.innerHTML = `<p class="ad-note">${L.length} viaturas · ${L.filter(c=>!c.vendido).length} disponíveis</p>` + L.map(c=>`
+    <div class="ad-row">
+      <div class="ad-th">${cover(c)?`<img src="${esc(cover(c))}" alt="">`:carSVG(c.hex,c.carr)}</div>
+      <div><b>${esc(c.marca)} ${esc(c.modelo)}</b><small>${esc(c.ano)} · ${fmt(c.km)} km · ${eur(c.preco)}${c.vendido?' · <span style="color:#ff6b61">VENDIDO</span>':""}</small></div>
+      <div class="ad-acts">
+        <button class="btn ghost" data-a="edit" data-id="${esc(c.id)}">Editar</button>
+        <button class="btn ghost" data-a="sold" data-id="${esc(c.id)}">${c.vendido?"Disponível":"Vendido"}</button>
+        <button class="btn danger" data-a="del" data-id="${esc(c.id)}">Apagar</button>
+      </div>
+    </div>`).join("");
+  el.querySelectorAll("[data-a]").forEach(b=>b.addEventListener("click",()=>adminAction(b)));
+}
+async function adminAction(b){
+  const id=b.dataset.id, c=CARS.find(x=>x.id===id); if(!c||!sb) return;
+  if(b.dataset.a==="edit") return openForm(c);
+  let res;
+  if(b.dataset.a==="sold"){ b.disabled=true; res=await sb.from("carros").update({vendido:!c.vendido}).eq("id",id); }
+  if(b.dataset.a==="del"){
+    if(!b.dataset.ok){ b.dataset.ok="1"; b.textContent="Confirmar?"; setTimeout(()=>{ if(b.isConnected){ delete b.dataset.ok; b.textContent="Apagar"; } },3000); return; }
+    b.disabled=true; b.textContent="A apagar…"; res=await sb.from("carros").delete().eq("id",id);
+  }
+  if(res && res.error){ b.disabled=false; $("#ad-note").textContent="Não foi possível guardar a alteração."; return; }
+  await loadCars();
+}
+async function seedExamples(){
+  const b=$("#ad-seed"); b.disabled=true; b.textContent="A importar…";
+  const rows=CARROS.map(({id,desc,...d})=>({...d,descricao:desc}));
+  const {error}=await sb.from("carros").insert(rows);
+  if(error){ b.textContent="Erro ao importar"; b.disabled=false; return; }
+  await loadCars();
+}
+
+/* ---- formulário ---- */
+function openForm(c){
+  editingId = c ? c.id : null;
+  $("#ad-list").hidden=true; $("#ad-new").hidden=true; $("#ad-form").hidden=false;
+  $("#ad-title").textContent = c ? "Editar viatura" : "Nova viatura";
+  const v = c || {lug:5};
+  $("#af-marca").value=v.marca||""; $("#af-modelo").value=v.modelo||""; $("#af-versao").value=v.versao||"";
+  $("#af-preco").value=v.preco||""; $("#af-ano").value=v.ano||""; $("#af-km").value=v.km??"";
+  $("#af-comb").value=COMBS.includes(v.comb)?v.comb:""; $("#af-caixa").value=CAIXAS.includes(v.caixa)?v.caixa:""; $("#af-carr").value=CARRS.includes(v.carr)?v.carr:"";
+  $("#af-cv").value=v.cv||""; $("#af-lug").value=v.lug||""; $("#af-cor").value=v.cor||""; $("#af-dest").value=v.destaque||"";
+  $("#af-eq").value=(v.eq||[]).join(", "); $("#af-desc").value=v.desc||""; $("#af-vend").value=v.vendido?"1":"0";
+  editPhotos = (v.fotos||[]).map(u=>({url:u}));
+  $("#af-status").textContent=""; $("#af-save").disabled=false;
+  renderPhotos();
+  admin.querySelector(".mbox").scrollTop=0;
+}
+function renderPhotos(){
+  $("#af-ph").innerHTML = editPhotos.map((p,i)=>`<div class="ph"><img src="${esc(p.url||p.preview)}" alt="">
+    <button type="button" data-rm="${i}" aria-label="Remover">×</button>
+    ${i===0?'<span class="cap">CAPA</span>':`<button type="button" class="mk" data-cap="${i}">Tornar capa</button>`}</div>`).join("");
+  $("#af-ph").querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click",()=>{ editPhotos.splice(+b.dataset.rm,1); renderPhotos(); }));
+  $("#af-ph").querySelectorAll("[data-cap]").forEach(b=>b.addEventListener("click",()=>{ const [p]=editPhotos.splice(+b.dataset.cap,1); editPhotos.unshift(p); renderPhotos(); }));
+}
+$("#af-files").addEventListener("change",e=>{
+  [...e.target.files].forEach(f=>{ if(f.type.startsWith("image/")) editPhotos.push({file:f,preview:URL.createObjectURL(f)}); });
+  e.target.value=""; renderPhotos();
+});
+async function shrink(file){
+  try{
+    const bmp=await createImageBitmap(file);
+    const s=Math.min(1,1600/Math.max(bmp.width,bmp.height));
+    const cv=document.createElement("canvas"); cv.width=Math.round(bmp.width*s); cv.height=Math.round(bmp.height*s);
+    cv.getContext("2d").drawImage(bmp,0,0,cv.width,cv.height);
+    const b=await new Promise(r=>cv.toBlob(r,"image/webp",0.82));
+    return b || file;
+  }catch(_){ return file; }
+}
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2));
+$("#ad-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const st=$("#af-status"); st.style.color="";
+  const marca=$("#af-marca").value.trim(), modelo=$("#af-modelo").value.trim(), preco=+$("#af-preco").value, ano=+$("#af-ano").value;
+  const miss=[]; if(!marca) miss.push("marca"); if(!modelo) miss.push("modelo"); if(!(preco>0)) miss.push("preço"); if(!(ano>1950)) miss.push("ano");
+  if(miss.length){ st.style.color="#ff6b61"; st.textContent="Falta preencher: "+miss.join(", ")+"."; return; }
+  if(!sb||!isAdmin){ st.style.color="#ff6b61"; st.textContent="Sessão terminada. Entra novamente."; return; }
+  $("#af-save").disabled=true;
+  try{
+    const fotos=[]; let n=0; const novas=editPhotos.filter(p=>p.file).length;
+    for(const p of editPhotos){
+      if(p.url){ fotos.push(p.url); continue; }
+      st.textContent=`A carregar foto ${++n} de ${novas}…`;
+      const blob=await shrink(p.file), ext=blob.type==="image/webp"?"webp":(p.file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+      const path=`carros/${uid()}.${ext}`;
+      const up=await sb.storage.from("fotos").upload(path,blob,{contentType:blob.type||"image/jpeg",upsert:false});
+      if(up.error) throw up.error;
+      fotos.push(sb.storage.from("fotos").getPublicUrl(path).data.publicUrl);
+    }
+    st.textContent="A guardar…";
+    const old = editingId ? CARS.find(x=>x.id===editingId) : null;
+    const row = {marca, modelo, versao:$("#af-versao").value.trim(), preco, ano, km:+$("#af-km").value||0,
+      comb:$("#af-comb").value, caixa:$("#af-caixa").value, carr:$("#af-carr").value, cv:+$("#af-cv").value||0, lug:+$("#af-lug").value||0,
+      cor:$("#af-cor").value.trim(), hex:(old&&old.hex)||"#8a8d92", destaque:$("#af-dest").value.trim(),
+      eq:$("#af-eq").value.split(",").map(x=>x.trim()).filter(Boolean), descricao:$("#af-desc").value.trim(),
+      fotos, vendido:$("#af-vend").value==="1"};
+    const res = editingId ? await sb.from("carros").update(row).eq("id",editingId) : await sb.from("carros").insert({...row,criado:Date.now()});
+    if(res.error) throw res.error;
+    editPhotos.forEach(p=>p.preview&&URL.revokeObjectURL(p.preview));
+    await loadCars(); showList();
+    $("#ad-note").textContent="✓ Viatura guardada. Já está visível no site.";
+  }catch(err){
+    $("#af-save").disabled=false; st.style.color="#ff6b61";
+    st.textContent="Não foi possível guardar. Verifica a ligação e tenta novamente.";
+    console.warn(err);
+  }
+});
+
+/* ================== OFICINA ================== */
+$("#services").innerHTML = SERVICOS.map(s=>`<div class="glass svc"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${s.i}</svg></div><h3>${s.n}</h3><p>${s.d}</p></div>`).join("");
+const B = {svcs:new Set(), slot:""};
+$("#b-svcs").innerHTML = SERVICOS.map(s=>`<button type="button" class="chip" data-v="${s.n}">${s.n}</button>`).join("") + `<button type="button" class="chip" data-v="Outro">Outro</button>`;
+$("#b-svcs").addEventListener("click",e=>{
+  const b=e.target.closest(".chip"); if(!b) return;
+  B.svcs.has(b.dataset.v)?B.svcs.delete(b.dataset.v):B.svcs.add(b.dataset.v);
+  b.classList.toggle("on"); summary();
+});
+const SLOTS_SEMANA=["09:00","10:00","11:00","12:00","14:00","15:00","16:00","17:00"];
+const SLOTS_SAB=["09:00","10:00","11:00","12:00"];
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const tom=new Date(); tom.setDate(tom.getDate()+1);
+$("#b-data").min = iso(tom);
+function renderSlots(){
+  const v=$("#b-data").value; let day=-1;
+  if(v){ const [y,m,d]=v.split("-").map(Number); day=new Date(y,m-1,d).getDay(); }
+  const sab = day===6, dom = day===0;
+  $("#b-dhint").textContent = dom ? "Ao domingo estamos encerrados. Escolhe outro dia." : sab ? "Sábado: só de manhã (9h–13h)." : "Seg–Sex 9h–19h · Sáb 9h–13h";
+  $("#b-dhint").style.color = dom ? "#ff6b61" : "";
+  if(dom || (sab && !SLOTS_SAB.includes(B.slot))) B.slot="";
+  $("#b-slots").innerHTML = SLOTS_SEMANA.map(s=>{
+    const off = dom || (sab && !SLOTS_SAB.includes(s));
+    return `<button type="button" class="slot${B.slot===s?" on":""}" data-s="${s}" ${off?"disabled":""}>${s}</button>`;
+  }).join("");
+}
+$("#b-slots").addEventListener("click",e=>{ const b=e.target.closest(".slot"); if(!b||b.disabled) return; B.slot=b.dataset.s; renderSlots(); summary(); });
+$("#b-data").addEventListener("change",()=>{ renderSlots(); summary(); });
+["#b-nome","#b-tel","#b-carro","#b-mat","#b-ano","#b-km","#b-obs","#b-cort"].forEach(s=>$(s).addEventListener("input",summary));
+
+function dataPT(v){ if(!v) return ""; const [y,m,d]=v.split("-").map(Number); return new Date(y,m-1,d).toLocaleDateString("pt-PT",{weekday:"long",day:"numeric",month:"long"}); }
+function vals(){
+  return {nome:$("#b-nome").value.trim(),tel:$("#b-tel").value.trim(),carro:$("#b-carro").value.trim(),mat:$("#b-mat").value.trim().toUpperCase(),
+    ano:$("#b-ano").value.trim(),km:$("#b-km").value.trim(),data:$("#b-data").value,obs:$("#b-obs").value.trim(),cort:$("#b-cort").value};
+}
+function summary(){
+  const v=vals();
+  const rows=[["Nome",v.nome],["Telemóvel",v.tel],["Viatura",[v.carro,v.ano].filter(Boolean).join(" · ")],["Matrícula",v.mat],["Km",v.km?fmt(+v.km):""],
+    ["Serviços",[...B.svcs].join(", ")],["Data",dataPT(v.data)],["Hora",B.slot],["Cortesia",v.cort]];
+  $("#sum").innerHTML = rows.map(([k,x])=>`<div><span>${k}</span><b>${x?esc(x):"—"}</b></div>`).join("");
+  $("#b-done").classList.remove("on");
+}
+function buildMsg(v){
+  return [
+    "*Pedido de marcação · Auto Neves*","",
+    `Nome: ${v.nome}`, `Telemóvel: ${v.tel}`,
+    `Viatura: ${v.carro}${v.ano?" ("+v.ano+")":""}`,
+    v.mat?`Matrícula: ${v.mat}`:null, v.km?`Km: ${fmt(+v.km)}`:null,
+    `Serviço(s): ${[...B.svcs].join(", ")}`,
+    `Data preferida: ${dataPT(v.data)}`, `Hora preferida: ${B.slot}`,
+    `Carro de cortesia: ${v.cort}`,
+    v.obs?`\nProblema: ${v.obs}`:null,
+    "","(Enviado pelo site Zumbido Rolante)"
+  ].filter(x=>x!==null).join("\n");
+}
+let lastMsg="";
+$("#bform").addEventListener("submit",e=>{
+  e.preventDefault();
+  const v=vals(), err=[];
+  if(!v.nome) err.push("nome");
+  if(!/^\+?[\d\s]{9,15}$/.test(v.tel)) err.push("telemóvel válido");
+  if(!v.carro) err.push("marca e modelo");
+  if(!B.svcs.size) err.push("pelo menos um serviço");
+  if(!v.data) err.push("data");
+  else { const [y,m,d]=v.data.split("-").map(Number); if(new Date(y,m-1,d).getDay()===0) err.push("um dia que não seja domingo"); }
+  if(!B.slot) err.push("hora");
+  const box=$("#b-err");
+  if(err.length){ box.textContent="Falta preencher: "+err.join(", ")+"."; box.style.display="block"; $("#b-done").classList.remove("on"); return; }
+  box.style.display="none";
+  lastMsg=buildMsg(v);
+  $("#b-walink").href=`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(lastMsg)}`;
+  $("#b-done").classList.add("on");
+  $("#b-done").scrollIntoView({behavior:"smooth",block:"center"});
+});
+$("#b-copy").addEventListener("click",async()=>{
+  try{ await navigator.clipboard.writeText(lastMsg); $("#b-copy").textContent="✓ Copiado"; }
+  catch(_){ $("#b-copy").textContent="Não foi possível copiar"; }
+  setTimeout(()=>$("#b-copy").textContent="Copiar pedido",2200);
+});
+
+/* ================== VISITA 360° ==================
+   Panorama equiretangular desenhado em canvas e mostrado com WebGL.
+   Para usar fotos 360° reais, basta trocar paintExpo/paintOficina por uma imagem. */
+const PW=4096, PH=2048, D2R=Math.PI/180, EYE=1.6;
+const T={ready:false,busy:false,visible:false,gl:null,loc:null,tex:null,yaw:0,pitch:-0.06,fov:1.3,vy:0,auto:true,
+  scene:"expo",hs:[],pano:null,ptrs:new Map(),pinch:0,moved:0};
+const yE=e=>PH*(0.5-e/Math.PI);
+const xY=d=>PW*(((d/360+0.5)%1+1)%1);
+const elevAt=(h,d)=>Math.atan((h-EYE)/d);
+const imgCache={};
+function loadImg(u){
+  if(!u) return Promise.resolve(null);
+  if(!imgCache[u]) imgCache[u]=new Promise(r=>{ const i=new Image(); i.onload=()=>r(i); i.onerror=()=>r(null); i.src=u; });
+  return imgCache[u];
+}
+/* desenha algo centrado em x, repetindo do outro lado da costura */
+function wrapX(x,w,fn){ fn(x); if(x-w/2<0) fn(x+PW); if(x+w/2>PW) fn(x-PW); }
+function rectYaw(ctx,yawA,yawB,eTop,eBot,fill){
+  const x=xY(yawA), w=(yawB-yawA)/360*PW, y=yE(eTop), h=yE(eBot)-y;
+  ctx.fillStyle=fill; ctx.fillRect(x,y,w,h); if(x+w>PW) ctx.fillRect(x-PW,y,w,h);
+  return {x,y,w,h};
+}
+function hLine(ctx,y,color,lw,blur){ ctx.save(); ctx.strokeStyle=color; ctx.lineWidth=lw; if(blur){ctx.shadowColor=color;ctx.shadowBlur=blur;} ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(PW,y); ctx.stroke(); ctx.restore(); }
+function vLines(ctx,step,y0,y1,color,lw=2){ ctx.strokeStyle=color; ctx.lineWidth=lw; ctx.beginPath(); for(let a=-180;a<180;a+=step){ const x=xY(a); ctx.moveTo(x,y0); ctx.lineTo(x,y1);} ctx.stroke(); }
+function carPath(ctx,cx,yb,w,h,hex,tipo){
+  const sx=w/350, sy=h/112;
+  ctx.save(); ctx.translate(cx-205*sx, yb-152*sy); ctx.scale(sx,sy);
+  const body=new Path2D(CAR_B[tipo]||CAR_B.Hatchback), win=new Path2D(CAR_W[tipo]||CAR_W.Hatchback);
+  ctx.fillStyle=/^#[0-9a-f]{6}$/i.test(hex)?hex:"#8a8d92"; ctx.fill(body);
+  const g=ctx.createLinearGradient(0,40,0,135); g.addColorStop(0,"rgba(255,255,255,.38)"); g.addColorStop(.45,"rgba(255,255,255,0)"); g.addColorStop(1,"rgba(0,0,0,.45)");
+  ctx.fillStyle=g; ctx.fill(body);
+  ctx.fillStyle="rgba(10,14,20,.93)"; ctx.fill(win);
+  ctx.fillStyle="#e8f6ff"; ctx.fillRect(352,96,18,7); ctx.fillStyle="#ff1a0d"; ctx.fillRect(40,98,13,6);
+  for(const wx of [110,304]){ for(const [r,c] of [[22,"#09090b"],[13,"#62626b"],[4,"#09090b"]]){ ctx.fillStyle=c; ctx.beginPath(); ctx.arc(wx,130,r,0,7); ctx.fill(); } }
+  ctx.restore();
+}
+/* carro pousado a distância d, com base à altura 'base' (m) */
+function drawCar(ctx,c,yaw,d,base){
+  const L=4.5, Hc=1.5;
+  const w=2*Math.atan(L/2/d)/D2R/360*PW, yb=yE(elevAt(base,d)), h=yb-yE(elevAt(base+Hc,d));
+  wrapX(xY(yaw),w,x=>{
+    if(base<0.05){ // poça de luz + reflexo no chão
+      ctx.save(); ctx.translate(x,yb); ctx.scale(1,.22); const g=ctx.createRadialGradient(0,0,0,0,0,w*.62);
+      g.addColorStop(0,"rgba(255,255,255,.13)"); g.addColorStop(1,"rgba(255,255,255,0)"); ctx.fillStyle=g; ctx.fillRect(-w,-w,2*w,2*w); ctx.restore();
+      ctx.save(); ctx.globalAlpha=.14; ctx.translate(0,2*yb); ctx.scale(1,-1); carPath(ctx,x,yb,w,h,c.hex,c.carr); ctx.restore();
+      ctx.save(); ctx.fillStyle="rgba(0,0,0,.55)"; ctx.beginPath(); ctx.ellipse(x,yb-2,w*.52,h*.06,0,0,7); ctx.fill(); ctx.restore();
+    }
+    carPath(ctx,x,yb,w,h,c.hex,c.carr);
+  });
+  return {w,h,yb};
+}
+function text(ctx,str,x,y,font,color,glow,align="center"){ ctx.save(); ctx.font=font; ctx.fillStyle=color; ctx.textAlign=align; ctx.textBaseline="middle"; if(glow){ctx.shadowColor=glow;ctx.shadowBlur=30;} ctx.fillText(str,x,y); ctx.restore(); }
+
+async function paintExpo(ctx){
+  const R=7, WH=4.6, eC=Math.atan((WH-EYE)/R), eF=Math.atan(-EYE/R), hs=[];
+  // teto
+  let g=ctx.createLinearGradient(0,0,0,yE(eC)); g.addColorStop(0,"#030304"); g.addColorStop(1,"#0d0d10"); ctx.fillStyle=g; ctx.fillRect(0,0,PW,yE(eC));
+  vLines(ctx,15,0,yE(eC),"rgba(255,255,255,.035)");
+  for(const r of [1.8,3.3,4.8,6.2]) hLine(ctx,yE(Math.atan((WH-.05-EYE)/r)),"rgba(255,255,255,.95)",5,26);
+  // parede
+  g=ctx.createLinearGradient(0,yE(eC),0,yE(eF)); g.addColorStop(0,"#17171b"); g.addColorStop(1,"#0e0e11"); ctx.fillStyle=g; ctx.fillRect(0,yE(eC),PW,yE(eF)-yE(eC));
+  vLines(ctx,12,yE(eC),yE(eF),"rgba(255,255,255,.045)");
+  // chão
+  g=ctx.createLinearGradient(0,yE(eF),0,PH); g.addColorStop(0,"#18181c"); g.addColorStop(1,"#050506"); ctx.fillStyle=g; ctx.fillRect(0,yE(eF),PW,PH-yE(eF));
+  ctx.strokeStyle="rgba(255,255,255,.05)"; ctx.lineWidth=2; ctx.beginPath();
+  for(let r=.8;r<R;r+=.7){ const y=yE(Math.atan(-EYE/r)); ctx.moveTo(0,y); ctx.lineTo(PW,y); } ctx.stroke();
+  vLines(ctx,10,yE(eF),PH,"rgba(255,255,255,.04)");
+  // faixas LED vermelhas
+  hLine(ctx,yE(eC)+5,"#ff1a0d",6,40);
+  hLine(ctx,yE(elevAt(.1,R)),"#ff1a0d",5,34);
+  // entrada envidraçada (atrás)
+  const gl=rectYaw(ctx,166,194,elevAt(4.3,R),elevAt(.1,R),"#101823");
+  ctx.save(); ctx.strokeStyle="rgba(140,170,210,.25)"; ctx.lineWidth=4; for(let a=166;a<=194;a+=7){ const x=xY(a); ctx.beginPath(); ctx.moveTo(x,gl.y); ctx.lineTo(x,gl.y+gl.h); ctx.stroke(); } ctx.restore();
+  text(ctx,"ENTRADA",xY(180),yE(elevAt(3.9,R)),"500 34px 'JetBrains Mono', ui-monospace, monospace","rgba(160,190,230,.6)");
+  // receção + letreiro
+  rectYaw(ctx,128,172,elevAt(1.05,3.6),elevAt(0,3.6),"#141418");
+  ctx.save(); ctx.strokeStyle="#ff1a0d"; ctx.shadowColor="#ff1a0d"; ctx.shadowBlur=24; ctx.lineWidth=5; const yd=yE(elevAt(1.05,3.6));
+  ctx.beginPath(); ctx.moveTo(xY(128),yd); ctx.lineTo(xY(172),yd); ctx.stroke(); ctx.restore();
+  const ys=yE(elevAt(3.3,R));
+  ctx.save(); ctx.fillStyle="#ff1a0d"; ctx.shadowColor="#ff1a0d"; ctx.shadowBlur=40; ctx.fillRect(xY(150)-330,ys-46,92,92); ctx.restore();
+  ctx.save(); ctx.translate(xY(150)-330+46,ys); ctx.scale(3.2,3.2); ctx.fillStyle="#fff"; ctx.fill(new Path2D("M2.5 -11 L-9 1.5 H-1.5 L-3.5 11 L9 -2.5 H1.5 Z")); ctx.restore();
+  text(ctx,"ZUMBIDO ROLANTE",xY(150)-210,ys,"700 92px 'Space Grotesk', Arial, sans-serif","#fff","rgba(255,255,255,.35)","left");
+  hs.push({yaw:150,elev:elevAt(.8,3.6)/D2R,type:"info",title:"Receção",sub:"Fala connosco →",go:"contactos"});
+  // porta para a oficina
+  const dr=rectYaw(ctx,-160,-140,elevAt(2.7,R),eF,"#1f2126");
+  g=ctx.createLinearGradient(0,dr.y,0,dr.y+dr.h); g.addColorStop(0,"#2b2e35"); g.addColorStop(1,"#121316"); ctx.fillStyle=g; ctx.fillRect(dr.x+10,dr.y+10,dr.w-20,dr.h-10);
+  ctx.save(); ctx.strokeStyle="#ff1a0d"; ctx.shadowColor="#ff1a0d"; ctx.shadowBlur=24; ctx.lineWidth=5; ctx.strokeRect(dr.x,dr.y,dr.w,dr.h+20); ctx.restore();
+  text(ctx,"OFICINA · AUTO NEVES",xY(-150),yE(elevAt(3.15,R)),"600 40px 'JetBrains Mono', ui-monospace, monospace","#ff4a3d","#ff1a0d");
+  hs.push({yaw:-150,elev:elevAt(1.2,R)/D2R,type:"go",title:"Ir para a Oficina",to:"oficina"});
+  // carros + ecrãs
+  const pick=disp().slice().sort((a,b)=>(cover(b)?1:0)-(cover(a)?1:0)||(b.criado||0)-(a.criado||0)).slice(0,4);
+  const slots=[-32,32,-96,96];
+  const imgs=await Promise.all(pick.map(c=>loadImg(cover(c))));
+  pick.forEach((c,i)=>{
+    const yaw=slots[i];
+    drawCar(ctx,c,yaw,4.8,0);
+    const sc=rectYaw(ctx,yaw-15,yaw+15,elevAt(4.05,R),elevAt(2.35,R),"#000");
+    const im=imgs[i];
+    if(im){ const ar=im.width/im.height, br=sc.w/sc.h; let sw=im.width,sh=im.height,sx=0,sy=0;
+      if(ar>br){ sw=im.height*br; sx=(im.width-sw)/2; } else { sh=im.width/br; sy=(im.height-sh)/2; }
+      wrapX(sc.x+sc.w/2,sc.w,x=>ctx.drawImage(im,sx,sy,sw,sh,x-sc.w/2,sc.y,sc.w,sc.h)); }
+    else { g=ctx.createLinearGradient(sc.x,sc.y,sc.x+sc.w,sc.y+sc.h); g.addColorStop(0,"#1c1c22"); g.addColorStop(1,"#3a0905"); ctx.fillStyle=g; ctx.fillRect(sc.x,sc.y,sc.w,sc.h); }
+    g=ctx.createLinearGradient(0,sc.y+sc.h*.6,0,sc.y+sc.h); g.addColorStop(0,"rgba(0,0,0,0)"); g.addColorStop(1,"rgba(0,0,0,.85)"); ctx.fillStyle=g; ctx.fillRect(sc.x,sc.y+sc.h*.6,sc.w,sc.h*.4);
+    text(ctx,(c.marca+" "+c.modelo).toUpperCase().slice(0,26),sc.x+sc.w/2,sc.y+sc.h-24,"600 22px 'JetBrains Mono', ui-monospace, monospace","#fff");
+    ctx.save(); ctx.strokeStyle="#ff1a0d"; ctx.shadowColor="#ff1a0d"; ctx.shadowBlur=26; ctx.lineWidth=4; ctx.strokeRect(sc.x,sc.y,sc.w,sc.h); ctx.restore();
+    hs.push({yaw,elev:-9,type:"car",id:c.id,title:c.marca+" "+c.modelo,sub:eur(c.preco)});
+  });
+  return hs;
+}
+
+async function paintOficina(ctx){
+  const R=7, WH=5, eC=Math.atan((WH-EYE)/R), eF=Math.atan(-EYE/R), hs=[];
+  let g=ctx.createLinearGradient(0,0,0,yE(eC)); g.addColorStop(0,"#070708"); g.addColorStop(1,"#121317"); ctx.fillStyle=g; ctx.fillRect(0,0,PW,yE(eC));
+  vLines(ctx,20,0,yE(eC),"rgba(255,255,255,.05)",3);
+  for(const r of [2.6,4.6]) for(let a=-180;a<180;a+=45){ const y=yE(Math.atan((WH-.4-EYE)/r)), w=2*Math.atan(.7/r)/D2R/360*PW;
+    ctx.save(); ctx.fillStyle="#fff"; ctx.shadowColor="#dfe9ff"; ctx.shadowBlur=30; wrapX(xY(a+(r>3?22:0)),w,x=>ctx.fillRect(x-w/2,y-5,w,10)); ctx.restore(); }
+  // parede industrial
+  g=ctx.createLinearGradient(0,yE(eC),0,yE(eF)); g.addColorStop(0,"#23252b"); g.addColorStop(1,"#191a1e"); ctx.fillStyle=g; ctx.fillRect(0,yE(eC),PW,yE(eF)-yE(eC));
+  ctx.strokeStyle="rgba(255,255,255,.035)"; ctx.lineWidth=2; ctx.beginPath(); for(let y=yE(eC);y<yE(eF);y+=14){ ctx.moveTo(0,y); ctx.lineTo(PW,y);} ctx.stroke();
+  // chão epóxi
+  g=ctx.createLinearGradient(0,yE(eF),0,PH); g.addColorStop(0,"#2b2d33"); g.addColorStop(1,"#0d0e10"); ctx.fillStyle=g; ctx.fillRect(0,yE(eF),PW,PH-yE(eF));
+  hLine(ctx,yE(Math.atan(-EYE/5.6)),"#e8b10e",7,8);
+  ctx.strokeStyle="#e8b10e"; ctx.lineWidth=7; ctx.beginPath(); for(const a of [-22,22]){ ctx.moveTo(xY(a),yE(Math.atan(-EYE/5.6))); ctx.lineTo(xY(a*.35),PH);} ctx.stroke();
+  hLine(ctx,yE(elevAt(.1,R)),"#ff1a0d",5,30);
+  // letreiro
+  text(ctx,"AUTO NEVES",xY(0),yE(elevAt(4.2,R)),"700 110px 'Space Grotesk', Arial, sans-serif","#fff","rgba(255,255,255,.3)");
+  text(ctx,"OFICINA · MECÂNICA · DIAGNÓSTICO",xY(0),yE(elevAt(3.62,R)),"500 30px 'JetBrains Mono', ui-monospace, monospace","#ff4a3d","#ff1a0d");
+  // elevador com carro
+  const d=4.3;
+  for(const a of [-21,21]){ const w=2*Math.atan(.14/d)/D2R; rectYaw(ctx,a-w,a+w,elevAt(3.2,d),elevAt(0,d),"#c40800"); rectYaw(ctx,a-w*.4,a+w*.4,elevAt(3.2,d),elevAt(0,d),"rgba(255,255,255,.12)"); }
+  const liftCar={hex:"#2b5aa8",carr:"Hatchback"};
+  drawCar(ctx,liftCar,0,d,1.25);
+  ctx.strokeStyle="#7a7b80"; ctx.lineWidth=12; ctx.beginPath(); const ya=yE(elevAt(1.2,d)); ctx.moveTo(xY(-21),ya); ctx.lineTo(xY(-8),ya); ctx.moveTo(xY(21),ya); ctx.lineTo(xY(8),ya); ctx.stroke();
+  hs.push({yaw:0,elev:elevAt(1.95,d)/D2R,type:"info",title:"Elevador",sub:"Revisões e mecânica →",go:"oficina"});
+  // painel de ferramentas + bancada
+  const pb=rectYaw(ctx,58,92,elevAt(2.7,R),elevAt(1.25,R),"#2c2f36");
+  ctx.fillStyle="rgba(0,0,0,.35)"; for(let x=pb.x+14;x<pb.x+pb.w;x+=22) for(let y=pb.y+14;y<pb.y+pb.h;y+=22){ ctx.beginPath(); ctx.arc(x,y,2.5,0,7); ctx.fill(); }
+  ctx.fillStyle="#b9bcc4"; for(let i=0;i<9;i++){ const x=pb.x+30+i*(pb.w-60)/8, y=pb.y+pb.h*.5, l=40+((i*37)%5)*16;
+    ctx.save(); ctx.translate(x,y); ctx.fillRect(-6,-l/2,12,l); ctx.beginPath(); ctx.arc(0,-l/2,14,0,7); ctx.fill(); ctx.fillStyle="#2c2f36"; ctx.beginPath(); ctx.arc(0,-l/2-4,7,0,7); ctx.fill(); ctx.restore(); }
+  rectYaw(ctx,56,94,elevAt(.95,6.2),elevAt(0,6.2),"#15161a"); rectYaw(ctx,56,94,elevAt(.95,6.2),elevAt(.85,6.2),"#6d6f75");
+  hs.push({yaw:75,elev:elevAt(2,R)/D2R,type:"info",title:"Mecânica geral",sub:"Marcar serviço →",go:"oficina"});
+  // armário de ferramentas vermelho
+  const tc=rectYaw(ctx,100,112,elevAt(1.15,5.4),elevAt(0,5.4),"#b10700");
+  ctx.strokeStyle="rgba(0,0,0,.45)"; ctx.lineWidth=4; for(let k=1;k<6;k++){ const y=tc.y+k*tc.h/6; ctx.beginPath(); ctx.moveTo(tc.x+6,y); ctx.lineTo(tc.x+tc.w-6,y); ctx.stroke(); }
+  // estação de diagnóstico
+  const md=4.4, mw=Math.atan(.42/md)/D2R;
+  rectYaw(ctx,-45-mw*.15,-45+mw*.15,elevAt(1.1,md),elevAt(0,md),"#3a3c42");
+  const mon=rectYaw(ctx,-45-mw,-45+mw,elevAt(1.75,md),elevAt(1.1,md),"#06080b");
+  ctx.save(); ctx.strokeStyle="#ff1a0d"; ctx.lineWidth=3; ctx.shadowColor="#ff1a0d"; ctx.shadowBlur=14; ctx.strokeRect(mon.x,mon.y,mon.w,mon.h);
+  ctx.strokeStyle="#22c55e"; ctx.shadowColor="#22c55e"; ctx.beginPath(); for(let i=0;i<=40;i++){ const x=mon.x+12+i*(mon.w-24)/40, y=mon.y+mon.h*.55+Math.sin(i*.7)*mon.h*.18*Math.cos(i*.13); i?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.stroke(); ctx.restore();
+  text(ctx,"OBD · SISTEMAS OK",mon.x+mon.w/2,mon.y+22,"500 16px 'JetBrains Mono', ui-monospace, monospace","#22c55e");
+  hs.push({yaw:-45,elev:elevAt(1.45,md)/D2R,type:"info",title:"Diagnóstico eletrónico",sub:"Marcar serviço →",go:"oficina"});
+  // pilhas de pneus
+  for(const [a,n] of [[-98,5],[-89,4],[-80,3]]){ const td=4, tw=Math.atan(.33/td)/D2R;
+    for(let k=0;k<n;k++){ const r=rectYaw(ctx,a-tw,a+tw,elevAt(.22*(k+1),td),elevAt(.22*k,td),"#0b0b0c");
+      ctx.fillStyle="#26272b"; ctx.fillRect(r.x+8,r.y+r.h*.3,r.w-16,r.h*.12); ctx.fillRect(r.x+8,r.y+r.h*.62,r.w-16,r.h*.08); } }
+  hs.push({yaw:-89,elev:elevAt(1.3,4)/D2R,type:"info",title:"Pneus e alinhamento",sub:"Marcar serviço →",go:"oficina"});
+  // portão de enrolar
+  const pt=rectYaw(ctx,128,168,elevAt(3.6,R),eF,"#3a3d44");
+  ctx.strokeStyle="rgba(0,0,0,.35)"; ctx.lineWidth=3; for(let y=pt.y+10;y<pt.y+pt.h;y+=16){ ctx.beginPath(); ctx.moveTo(pt.x,y); ctx.lineTo(pt.x+pt.w,y); ctx.stroke(); }
+  ctx.save(); ctx.fillStyle="#fff7d6"; ctx.shadowColor="#fff2b0"; ctx.shadowBlur=30; ctx.fillRect(pt.x,pt.y+pt.h-10,pt.w,10); ctx.restore();
+  // porta de volta à exposição
+  const dr=rectYaw(ctx,-160,-140,elevAt(2.7,R),eF,"#0c0c0e");
+  g=ctx.createRadialGradient(dr.x+dr.w/2,dr.y+dr.h*.6,10,dr.x+dr.w/2,dr.y+dr.h*.6,dr.h); g.addColorStop(0,"rgba(255,26,13,.35)"); g.addColorStop(1,"rgba(255,26,13,0)"); ctx.fillStyle=g; ctx.fillRect(dr.x,dr.y,dr.w,dr.h);
+  ctx.save(); ctx.strokeStyle="#fff"; ctx.globalAlpha=.6; ctx.lineWidth=4; ctx.strokeRect(dr.x,dr.y,dr.w,dr.h+20); ctx.restore();
+  text(ctx,"EXPOSIÇÃO · STAND",xY(-150),yE(elevAt(3.15,R)),"600 40px 'JetBrains Mono', ui-monospace, monospace","#fff","rgba(255,255,255,.5)");
+  hs.push({yaw:-150,elev:elevAt(1.2,R)/D2R,type:"go",title:"Voltar à Exposição",to:"expo"});
+  return hs;
+}
+
+/* ---- WebGL ---- */
+function initGL(){
+  const cv=$("#tour-cv"), gl=cv.getContext("webgl",{antialias:false,alpha:false});
+  if(!gl) return false;
+  const sh=(t,s)=>{ const o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o); return o; };
+  const p=gl.createProgram();
+  gl.attachShader(p,sh(gl.VERTEX_SHADER,"attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}"));
+  gl.attachShader(p,sh(gl.FRAGMENT_SHADER,`precision highp float;
+    uniform sampler2D t;uniform vec2 res;uniform float yaw,pitch,fov;
+    void main(){
+      vec2 n=(gl_FragCoord.xy/res)*2.0-1.0; float tf=tan(fov*0.5);
+      vec3 d=normalize(vec3(n.x*tf*res.x/res.y,n.y*tf,-1.0));
+      float cp=cos(pitch),sp=sin(pitch); d=vec3(d.x,d.y*cp-d.z*sp,d.y*sp+d.z*cp);
+      float cy=cos(yaw),sy=sin(yaw); d=vec3(d.x*cy-d.z*sy,d.y,d.x*sy+d.z*cy);
+      float u=atan(d.x,-d.z)/6.2831853+0.5; float v=0.5-asin(clamp(d.y,-1.0,1.0))/3.1415926;
+      gl_FragColor=texture2D(t,vec2(u,v));
+    }`));
+  gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS)) return false;
+  gl.useProgram(p);
+  const b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const a=gl.getAttribLocation(p,"p"); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+  T.tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,T.tex);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.REPEAT); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+  T.loc={res:gl.getUniformLocation(p,"res"),yaw:gl.getUniformLocation(p,"yaw"),pitch:gl.getUniformLocation(p,"pitch"),fov:gl.getUniformLocation(p,"fov")};
+  T.gl=gl; T.maxTex=gl.getParameter(gl.MAX_TEXTURE_SIZE);
+  return true;
+}
+function upload(){
+  const gl=T.gl; let src=T.pano;
+  if(T.maxTex<PW){ const c=document.createElement("canvas"); c.width=T.maxTex; c.height=T.maxTex/2; c.getContext("2d").drawImage(T.pano,0,0,c.width,c.height); src=c; }
+  gl.bindTexture(gl.TEXTURE_2D,T.tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,src);
+}
+function buildHotspots(){
+  const box=$("#tour-hs");
+  box.innerHTML=T.hs.map((h,i)=>`<div class="hs ${h.type==="go"?"go":""}" data-i="${i}">
+    <span class="pt">${h.type==="go"?'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>':h.type==="car"?'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>':'<b style="font-size:14px">i</b>'}</span>
+    <span class="tip"><b>${esc(h.title)}</b>${h.sub?`<small>${esc(h.sub)}</small>`:""}</span></div>`).join("");
+  box.querySelectorAll(".hs").forEach(el=>{
+    el.addEventListener("pointerdown",e=>e.stopPropagation());
+    el.addEventListener("click",e=>{ e.stopPropagation(); const h=T.hs[+el.dataset.i];
+      if(h.type==="car") openCar(h.id); else if(h.type==="go") setScene(h.to); else if(h.go) location.hash=h.go; });
+  });
+}
+function placeHotspots(w,h){
+  const els=$("#tour-hs").children, tf=Math.tan(T.fov/2), A=w/h, cy=Math.cos(T.yaw), sy=Math.sin(T.yaw), cp=Math.cos(T.pitch), sp=Math.sin(T.pitch);
+  for(let i=0;i<els.length;i++){
+    const hp=T.hs[i], yw=hp.yaw*D2R, el=hp.elev*D2R;
+    const dx=Math.sin(yw)*Math.cos(el), dy=Math.sin(el), dz=-Math.cos(yw)*Math.cos(el);
+    const x1=dx*cy+dz*sy, z1=-dx*sy+dz*cy, y2=dy*cp+z1*sp, z2=-dy*sp+z1*cp;
+    if(z2>-0.15){ els[i].style.display="none"; continue; }
+    const sx=x1/(-z2)/(tf*A), syy=y2/(-z2)/tf;
+    if(Math.abs(sx)>1.15||Math.abs(syy)>1.15){ els[i].style.display="none"; continue; }
+    els[i].style.display="flex";
+    els[i].style.transform=`translate(${((sx+1)/2*w-17).toFixed(1)}px,${((1-syy)/2*h-17).toFixed(1)}px)`;
+  }
+}
+function frame(){
+  requestAnimationFrame(frame);
+  if(!T.visible||!T.ready) return;
+  const cv=$("#tour-cv"), dpr=Math.min(window.devicePixelRatio||1,2), w=cv.clientWidth, h=cv.clientHeight;
+  if(!w||!h) return;
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){ cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr); }
+  if(!T.ptrs.size){ if(Math.abs(T.vy)>1e-5){ T.yaw+=T.vy; T.vy*=.93; } else if(T.auto) T.yaw+=.0011; }
+  const gl=T.gl; gl.viewport(0,0,cv.width,cv.height);
+  gl.uniform2f(T.loc.res,cv.width,cv.height); gl.uniform1f(T.loc.yaw,T.yaw); gl.uniform1f(T.loc.pitch,T.pitch); gl.uniform1f(T.loc.fov,T.fov);
+  gl.drawArrays(gl.TRIANGLES,0,3);
+  placeHotspots(w,h);
+}
+async function setScene(z,keepView){
+  if(T.busy) return; T.busy=true;
+  const cv=$("#tour-cv");
+  if(!keepView) cv.style.opacity="0";
+  document.querySelectorAll("#tour-zones button").forEach(b=>b.classList.toggle("on",b.dataset.z===z));
+  try{ await Promise.all([document.fonts.load("700 92px 'Space Grotesk'"),document.fonts.load("600 40px 'JetBrains Mono'"),document.fonts.load("500 30px 'JetBrains Mono'")]); }catch(_){}
+  const ctx=T.pano.getContext("2d"); ctx.clearRect(0,0,PW,PH);
+  T.hs = z==="oficina" ? await paintOficina(ctx) : await paintExpo(ctx);
+  T.scene=z; upload(); buildHotspots();
+  if(!keepView){ const cvw=$("#tour-cv"); T.yaw=(z==="expo"&&cvw.clientWidth<cvw.clientHeight)?-32*D2R:0; T.pitch=-0.06; T.vy=0; setTimeout(()=>cv.style.opacity="1",60); }
+  T.busy=false;
+}
+async function openTour(){
+  if(T.ready||T.starting) return; T.starting=true;
+  T.pano=document.createElement("canvas"); T.pano.width=PW; T.pano.height=PH;
+  if(!initGL()){ $("#tour-load").textContent="O teu browser não suporta a visita 360°."; return; }
+  T.ready=true; await setScene("expo");
+  const ld=$("#tour-load"); ld.style.opacity="0"; setTimeout(()=>ld.style.display="none",400);
+  requestAnimationFrame(frame);
+}
+/* ---- controlos ---- */
+(function(){
+  const tour=$("#tour");
+  const stopAuto=()=>{ T.auto=false; $("#tour-hint").style.opacity="0"; };
+  tour.addEventListener("pointerdown",e=>{
+    if(e.target.closest(".tour-zones,.tbtn,.hs")) return;
+    tour.setPointerCapture(e.pointerId); T.ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); T.vy=0; tour.classList.add("drag"); stopAuto();
+    if(T.ptrs.size===2){ const [a,b]=[...T.ptrs.values()]; T.pinch=Math.hypot(a.x-b.x,a.y-b.y); }
+  });
+  tour.addEventListener("pointermove",e=>{
+    const p=T.ptrs.get(e.pointerId); if(!p) return;
+    if(T.ptrs.size===1){
+      const k=T.fov/tour.clientHeight, dx=e.clientX-p.x, dy=e.clientY-p.y;
+      T.yaw-=dx*k; T.pitch=Math.max(-1.3,Math.min(1.3,T.pitch+dy*k)); T.vy=-dx*k;
+    }
+    p.x=e.clientX; p.y=e.clientY;
+    if(T.ptrs.size===2){ const [a,b]=[...T.ptrs.values()], dd=Math.hypot(a.x-b.x,a.y-b.y);
+      if(T.pinch) T.fov=Math.max(.7,Math.min(1.75,T.fov*T.pinch/dd)); T.pinch=dd; }
+  });
+  const up=e=>{ T.ptrs.delete(e.pointerId); if(T.ptrs.size<2) T.pinch=0; if(!T.ptrs.size) tour.classList.remove("drag"); };
+  tour.addEventListener("pointerup",up); tour.addEventListener("pointercancel",up);
+  tour.addEventListener("wheel",e=>{ e.preventDefault(); stopAuto(); T.fov=Math.max(.7,Math.min(1.75,T.fov*(1+e.deltaY*.0012))); },{passive:false});
+  $("#tour-zones").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b&&b.dataset.z!==T.scene) setScene(b.dataset.z); });
+  $("#tour-fs").addEventListener("click",async()=>{
+    try{ if(document.fullscreenElement) await document.exitFullscreen(); else await tour.requestFullscreen(); }catch(_){}
+  });
+})();
+
+/* ================== ARRANQUE ================== */
+renderSlots(); summary(); refreshAll(); route();
+initCloud();
+</script>
+</body>
+</html>
